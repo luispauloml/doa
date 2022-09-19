@@ -77,7 +77,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
 
             daq.reset();
-            daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true)
+            daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true);
             ap = daq.createSession('ni'); % ap as ADD Project
             
             %%
