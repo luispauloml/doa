@@ -58,17 +58,24 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % eventdata  reserved - to be defined in a future version of MATLAB
             % handles    structure with handles and user data (see GUIDATA)
             % varargin   command line arguments to Direction_of_Arrival_Tshaped_All_Directions__GUI (see VARARGIN)
-            global str
-            str = get(handles.Status, 'String');
             app.setup_device();
 
+        end
+
+        function [] = log(app, msg)
+            % Add log message to status status window.
+            [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
+
+            msgs = {msg, app.Status.Items{:}};
+            app.Status.Items = msgs;
+            set(handles.Status, 'string', msgs);
+            guidata(hObject, handles);
         end
 
         function [] = setup_device(app)
             % Setup a NI device for the task.
             [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
 
-            global str
             daq.reset();
             daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true)
             ap = daq.createSession('ni'); % ap as ADD Project
@@ -109,10 +116,8 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % set(handles.Status,'string',ap);
             
             announce=sprintf('%s%d%s','Single recording is set for ',handles.duration,' s');
-            str{end+1} = 'Initializaton done...';
-            str{end+1} = announce;
-            new_str=flip(str);
-            set(handles.Status,'string',new_str);
+            app.log('Initializaton done...');
+            app.log(announce);
             %%
             beep
             % Choose default command line output for Direction_of_Arrival_Tshaped_All_Directions__GUI

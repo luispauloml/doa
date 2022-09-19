@@ -6,11 +6,8 @@ function Hit_Callback(app, event)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %% start to measure
-global str
 beep
-str{end+1}='Start recording...';
-new_str=flip(str);
-set(handles.Status,'string',new_str);
+app.log('Start recording...');
 data = app.daq_session.startForeground();
 
 % self calibration
@@ -19,9 +16,7 @@ for i=1:handles.numb_channel
 end
 
 %% check and save the data
-str{end+1}='Done recording';
-new_str=flip(str);
-set(handles.Status,'string',new_str');
+app.log('Done recording');
 
 
 handles.Data=data;
@@ -214,9 +209,7 @@ sensor2_pos=[0 -50];
 sensor3_pos=[-50 0];
 sensor4_pos=[50 0];
 
-str{end+1}='Ploting...';
-new_str=flip(str);
-set(handles.Status,'string',new_str);
+app.log('Ploting...');
 
 line_width=3;
 axes(handles.Position);
@@ -237,11 +230,7 @@ end
 
 hold off; set(gca,'Xlim',[-400 400],'Ylim',[-100 600],'FontSize',20,'FontWeight','bold'); grid;
 
-str{end+1}='Done!!!';
-new_str=fliplr(str);
-set(handles.Status,'string',new_str');
-% Update handles structure
-guidata(hObject, handles);
+app.log('Done!!!');
 
 axes(handles.LOGO);
 imshow('ASDL.gif');
