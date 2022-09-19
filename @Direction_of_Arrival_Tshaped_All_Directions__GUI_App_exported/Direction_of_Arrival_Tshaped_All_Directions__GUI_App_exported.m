@@ -59,18 +59,17 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % varargin   command line arguments to Direction_of_Arrival_Tshaped_All_Directions__GUI (see VARARGIN)
             global str ap
             str = get(handles.Status, 'String');
-            % axes(handles.LOGO);
-            % imshow('ASDL.gif');
-            lock_ni_dev=0;
-            while (1)
-                if lock_ni_dev==1; break; end
-                daq.reset
-                daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true)
-                if lock_ni_dev==0; break; end
-            end
-            
-            daq.getDevices;
-            % use daq.create session.
+            ap = app.setup_device();
+
+        end
+
+        function ap = setup_device(app)
+            % Setup a NI device for the task.
+            [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
+
+            global str
+            daq.reset();
+            daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true)
             ap = daq.createSession('ni'); % ap as ADD Project
             
             %%
