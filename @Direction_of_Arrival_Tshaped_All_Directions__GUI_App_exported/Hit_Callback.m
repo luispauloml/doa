@@ -6,12 +6,12 @@ function Hit_Callback(app, event)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %% start to measure
-global str ap
+global str
 beep
 str{end+1}='Start recording...';
 new_str=flip(str);
 set(handles.Status,'string',new_str);
-data = ap.startForeground();
+data = app.daq_session.startForeground();
 
 % self calibration
 for i=1:handles.numb_channel

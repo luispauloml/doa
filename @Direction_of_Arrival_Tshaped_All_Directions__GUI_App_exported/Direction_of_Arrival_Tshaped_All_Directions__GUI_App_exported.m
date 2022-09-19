@@ -42,6 +42,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         cluster2_catch  matlab.ui.control.UIAxes
         text15          matlab.ui.control.Label
         text16          matlab.ui.control.Label
+        daq_session     daq.ni.Session
     end
 
     % Callbacks that handle component events
@@ -57,13 +58,13 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % eventdata  reserved - to be defined in a future version of MATLAB
             % handles    structure with handles and user data (see GUIDATA)
             % varargin   command line arguments to Direction_of_Arrival_Tshaped_All_Directions__GUI (see VARARGIN)
-            global str ap
+            global str
             str = get(handles.Status, 'String');
-            ap = app.setup_device();
+            app.setup_device();
 
         end
 
-        function ap = setup_device(app)
+        function [] = setup_device(app)
             % Setup a NI device for the task.
             [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
 
@@ -102,6 +103,8 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             for i=1:handles.numb_channel
                 ap.Channels(i).Range=[-measuring_range,measuring_range];
             end
+
+            app.daq_session = ap;
             %----------------------------------------------
             % set(handles.Status,'string',ap);
             
