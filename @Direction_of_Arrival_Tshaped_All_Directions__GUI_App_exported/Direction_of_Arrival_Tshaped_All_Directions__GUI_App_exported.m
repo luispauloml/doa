@@ -58,6 +58,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % handles    structure with handles and user data (see GUIDATA)
             % varargin   command line arguments to Direction_of_Arrival_Tshaped_All_Directions__GUI (see VARARGIN)
             global str ap
+            str = get(handles.Status, 'String');
             % axes(handles.LOGO);
             % imshow('ASDL.gif');
             lock_ni_dev=0;
@@ -105,11 +106,11 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             %----------------------------------------------
             % set(handles.Status,'string',ap);
             
-%             str=get(handles.Status,'string');
-%             announce=sprintf('%s%d%s','Single recording is set for_',handles.duration,' s');
-%             str={str;'Initializaton done...';announce;};
-%             new_str=fliplr(str');
-%             set(handles.Status,'string',new_str');
+            announce=sprintf('%s%d%s','Single recording is set for ',handles.duration,' s');
+            str{end+1} = 'Initializaton done...';
+            str{end+1} = announce;
+            new_str=flip(str);
+            set(handles.Status,'string',new_str);
             %%
             beep
             % Choose default command line output for Direction_of_Arrival_Tshaped_All_Directions__GUI

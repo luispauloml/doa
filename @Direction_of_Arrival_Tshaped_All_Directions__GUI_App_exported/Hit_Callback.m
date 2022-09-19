@@ -8,9 +8,9 @@ function Hit_Callback(app, event)
 %% start to measure
 global str ap
 beep
-% str{length(str)+1}='Start recording...';
-% new_str=fliplr(str');
-% set(handles.Status,'string',new_str');
+str{end+1}='Start recording...';
+new_str=flip(str);
+set(handles.Status,'string',new_str);
 data = ap.startForeground();
 
 % self calibration
@@ -19,9 +19,9 @@ for i=1:handles.numb_channel
 end
 
 %% check and save the data
-% str{length(str)+1}='Done recording';
-% new_str=fliplr(str');
-% set(handles.Status,'string',new_str');
+str{end+1}='Done recording';
+new_str=flip(str);
+set(handles.Status,'string',new_str');
 
 
 handles.Data=data;
@@ -214,9 +214,9 @@ sensor2_pos=[0 -50];
 sensor3_pos=[-50 0];
 sensor4_pos=[50 0];
 
-% str{length(str)+1}='Ploting...';
-% new_str=fliplr(str');
-% set(handles.Status,'string',new_str');
+str{end+1}='Ploting...';
+new_str=flip(str);
+set(handles.Status,'string',new_str);
 
 line_width=3;
 axes(handles.Position);
@@ -237,9 +237,9 @@ end
 
 hold off; set(gca,'Xlim',[-400 400],'Ylim',[-100 600],'FontSize',20,'FontWeight','bold'); grid;
 
-% str{length(str)+1}='Done!!!';
-% new_str=fliplr(str');
-% set(handles.Status,'string',new_str');
+str{end+1}='Done!!!';
+new_str=fliplr(str);
+set(handles.Status,'string',new_str');
 % Update handles structure
 guidata(hObject, handles);
 
