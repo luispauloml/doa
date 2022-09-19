@@ -36,7 +36,6 @@ set(handles.Nyquist,'string',num2str(Fn));
 n=str2num(get(handles.Order,'string'));
 [b,c]=butter(n,Wn/Fn,'bandpass');
 filt_data=filter(b,c,data); % filtered row signal
-%figure; plot(filt_data)
 
 % data extraction
 threshold=5*max(filt_data(1:ceil(0.02*size(data,1)),1));
@@ -47,9 +46,7 @@ for i=1:size(data,1)
     end
 end
 ext_data=filt_data(thres_over_point-2000:thres_over_point+8000,:);
-%figure; plot(ext_data); grid; legend('1','2','3','4','5','6')
 signal=ext_data;
-%save(save_name,'signal')
 
 gtlv=str2num(get(handles.Threshold,'string'));
 min_point=6;
@@ -57,7 +54,6 @@ min_point=6;
 for on=1:1
 %% sensor 1 cluster signal processing for angle detection
 sensor1_data=ext_data(:,1:3);
-% axes(handles.cluster1_raw); plot(sensor1_data); grid;
 
 % get first wave arrival point
 % active threshold setup
@@ -107,12 +103,6 @@ for j=2:3
     end
 end
 
-% axes(handles.cluster1_catch);
-% plot(sensor1_data); hold all;
-% plot(peak_point(1),sensor1_data(peak_point(1),1),'o','Color',[0 0 0]);
-% plot(peak_point(2),sensor1_data(peak_point(2),2),'o','Color',[0 0 0]);
-% plot(peak_point(3),sensor1_data(peak_point(3),3),'o','Color',[0 0 0]);
-
 left=peak_point(3);%%%%%%%%%%% compare with right
 
 
@@ -124,7 +114,6 @@ dt31=peak_point(3)-peak_point(1);
 dist21=1;
 dist31=1;
 angle1=atan((dist21*dt21)/(dist31*dt31));
-% disp(angle1*180/pi)
 
 %% sensor 2 cluster signal processing for angle detection
 sensor2_data=ext_data(:,[1 2 4]);
@@ -188,15 +177,12 @@ plot(left,sensor1_data(left,3),'o','Color',[0 0 0]);
 
 right=peak_point(3);%%%%%%%%%%% compare with left
 
-% disp(thres_lev)
-
 for i=1:size(ext_data,1)
     if thres_lev < ext_data(i,3);
         threshold_over_point_L=i;
         break
     end
 end
-% disp(threshold_over_point_L)
 
 for i=1:size(ext_data,1)
     if thres_lev < ext_data(i,4);
@@ -204,7 +190,6 @@ for i=1:size(ext_data,1)
         break
     end
 end
-% disp(threshold_over_point_R)
 
 hold off;
 grid; set(gca,'Xlim',[peak_point(1)-100 max(peak_point(2:3))+100])
@@ -214,7 +199,6 @@ dt31=peak_point(3)-peak_point(1);
 dist21=1;
 dist31=1;
 angle2=pi-atan((dist21*dt21)/(dist31*dt31));
-% disp(angle2*180/pi)
 % now we have angle1 and angle2!
 
 %% impact localization
@@ -222,7 +206,6 @@ m1=tan(angle1);
 m2=-tan(angle2);
 A=[m2 -1;m1 -1];
 B=[700; 0];
-% pos_matrix=inv(A)*B
 end
 
 %% result visualization
@@ -230,9 +213,6 @@ sensor1_pos=[0 0];
 sensor2_pos=[0 -50];
 sensor3_pos=[-50 0];
 sensor4_pos=[50 0];
-% sensor5_pos=[0 700+50];
-% sensor6_pos=[0-50 700];
-% pos_matrix=-pos_matrix;
 
 % str{length(str)+1}='Ploting...';
 % new_str=fliplr(str');
@@ -240,14 +220,10 @@ sensor4_pos=[50 0];
 
 line_width=3;
 axes(handles.Position);
-% plot(pos_matrix(1),pos_matrix(2),'o','LineWidth',line_width,'Color',[0 0 0]);
 plot(sensor1_pos(1),sensor1_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);hold all;
 plot(sensor2_pos(1),sensor2_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);
 plot(sensor3_pos(1),sensor3_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);
 plot(sensor4_pos(1),sensor4_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);
-% plot(sensor5_pos(1),sensor5_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);
-% plot(sensor6_pos(1),sensor6_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   For All DOA
 if threshold_over_point_R<threshold_over_point_L
