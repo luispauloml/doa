@@ -6,6 +6,7 @@ function Hit_Callback(app, event)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %% start to measure
+NO_IMPACT_MSG = 'No impact detected';
 beep
 app.log('Start recording...');
 data = app.daq_session.startForeground();
@@ -40,6 +41,12 @@ for i=1:size(data,1)
         break
     end
 end
+
+if isempty(whos('thres_over_point'))
+    app.log(NO_IMPACT_MSG);
+    return
+end
+
 ext_data=filt_data(thres_over_point-2000:thres_over_point+8000,:);
 signal=ext_data;
 
@@ -60,6 +67,12 @@ for i=1:size(sensor1_data,1)
         break
     end
 end
+
+if isempty(whos('threshold_over_point'))
+    app.log(NO_IMPACT_MSG);
+    return
+end
+
 % find sensor 1 signal peak point
 for i=threshold_over_point:size(sensor1_data,1)
     fac1=sensor1_data(i,1)-sensor1_data(i-1,1);
