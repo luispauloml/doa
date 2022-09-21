@@ -70,6 +70,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             app.Status.Items = msgs;
             set(handles.Status, 'string', msgs);
             guidata(hObject, handles);
+            drawnow
         end
 
         function [] = setup_device(app)
