@@ -561,6 +561,21 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         end
     end
 
+    % Assorted static methods
+    methods (Access = public, Static)
+        function thres_over_point = point_over_threshold(data, threshold)
+            %% Find the index of an element in 'data' the is greater than 'threshold'.
+            %% Returns an empty matrix in case no value is above threshold.
+            thres_over_point = [];
+            for i = 1 : length(data)
+                if data(i) > threshold
+                    thres_over_point = i;
+                    break
+                end
+            end
+        end
+    end
+
     % App creation and deletion
     methods (Access = public)
 

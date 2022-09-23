@@ -12,14 +12,9 @@ filt_data = app.filter_signal(event, data);
 
 % data extraction
 threshold=5*max(filt_data(1:ceil(0.02*size(data,1)),1));
-for i=1:size(data,1)
-    if filt_data(i,1) > threshold
-        thres_over_point=i;
-        break
-    end
-end
+thres_over_point = app.point_over_threshold(filt_data(:,1), threshold);
 
-if isempty(whos('thres_over_point'))
+if isempty(thres_over_point)
     app.log(NO_IMPACT_MSG);
     return
 end
@@ -35,16 +30,10 @@ sensor1_data=ext_data(:,1:3);
 
 % get first wave arrival point
 % active threshold setup
-thres_lev=1.5*max(abs(sensor1_data(1:1000,1)));
 thres_lev=gtlv;
-for i=1:size(sensor1_data,1)
-    if thres_lev < sensor1_data(i,1);
-        threshold_over_point=i;
-        break
-    end
-end
+threshold_over_point = app.point_over_threshold(sensor1_data(:,1), thres_lev);
 
-if isempty(whos('threshold_over_point'))
+if isempty(threshold_over_point)
     app.log(NO_IMPACT_MSG);
     return
 end
@@ -106,14 +95,9 @@ axes(handles.cluster2_raw); plot(ext_data(:,[3 1 4])); grid;
 
 % get first wave arrival point
 % active threshold setup
-thres_lev=1.5*max(abs(sensor2_data(1:1000,1)));
 thres_lev=gtlv;
-for i=1:size(sensor2_data,1)
-    if thres_lev < sensor2_data(i,1);
-        threshold_over_point=i;
-        break
-    end
-end
+threshold_over_point = app.point_over_threshold(sensor2_data(:,1), thres_lev);
+
 % find sensor 1 signal peak point
 for i=threshold_over_point:size(sensor2_data,1)
     fac1=sensor2_data(i,1)-sensor2_data(i-1,1);
@@ -161,19 +145,8 @@ plot(left,sensor1_data(left,3),'o','Color',[0 0 0]);
 
 right=peak_point(3);%%%%%%%%%%% compare with left
 
-for i=1:size(ext_data,1)
-    if thres_lev < ext_data(i,3);
-        threshold_over_point_L=i;
-        break
-    end
-end
-
-for i=1:size(ext_data,1)
-    if thres_lev < ext_data(i,4);
-        threshold_over_point_R=i;
-        break
-    end
-end
+threshold_over_point_L = app.point_over_threshold(ext_data(:,3), thres_lev);
+threshold_over_point_R = app.point_over_threshold(ext_data(:,4), thres_lev);
 
 hold off;
 grid; set(gca,'Xlim',[peak_point(1)-100 max(peak_point(2:3))+100])
