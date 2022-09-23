@@ -7,20 +7,7 @@ function Hit_Callback(app, event)
 % handles    structure with handles and user data (see GUIDATA)
 %% start to measure
 NO_IMPACT_MSG = 'No impact detected';
-beep
-app.log('Start recording...');
-data = app.daq_session.startForeground();
-
-% self calibration
-for i=1:handles.numb_channel
-    data(:,i)=data(:,i)-data(1,i);
-end
-
-%% check and save the data
-app.log('Done recording');
-
-
-handles.Data=data;
+data = app.read_data(event);
 filt_data = app.filter_signal(event, data);
 
 % data extraction

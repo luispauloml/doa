@@ -542,6 +542,23 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             [b, c] = butter(n, Wn/Fn, 'bandpass');
             filt_data = filter(b, c, data); % filtered row signal
         end
+
+        function data = read_data(app, event)
+            %% Read data from DAQ
+            [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app, event);
+            beep
+            app.log('Start recording...');
+            data = app.daq_session.startForeground();
+
+            %% self calibration
+            for i = 1 : handles.numb_channel
+                data(:,i) = data(:,i) - data(1,i);
+            end
+
+            handles.Data = data;
+            guidata(hObject, handles);
+            app.log('Done recording');
+        end
     end
 
     % App creation and deletion
