@@ -39,40 +39,17 @@ if isempty(threshold_over_point)
 end
 
 % find sensor 1 signal peak point
-for i=threshold_over_point:size(sensor1_data,1)
-    fac1=sensor1_data(i,1)-sensor1_data(i-1,1);
-    fac2=sensor1_data(i+1,1)-sensor1_data(i,1);
+peak_point = [];
+range = threshold_over_point : size(sensor1_data, 1);
+peak_point(1) = app.find_peak(sensor1_data(range, 1)) + range(1) - 1;
 
-    if fac1*fac2 <0
-        if fac1 > 0
-            peak_point(1)=i;
-            break
-        end
-    end
-end
 % find sensor 2 signal peak point
+range = peak_point(1) : size(sensor1_data, 1);
 for j=2:3
-    for i=peak_point(1):size(sensor1_data,1)
-        fac1=sensor1_data(i,j)-sensor1_data(i-1,j);
-        fac2=sensor1_data(i+1,j)-sensor1_data(i,j);
-        if fac1*fac2 <0
-            if fac1 > 0
-                peak_point(j)=i;
-                break
-            end
-        end
-    end
+    peak_point(j) = app.find_peak(sensor1_data(range, j)) + range(1) - 1;
     if peak_point(j)-peak_point(1) < min_point
-        for i=peak_point(j)+1:size(sensor1_data,1)
-            fac1=sensor1_data(i,j)-sensor1_data(i-1,j);
-            fac2=sensor1_data(i+1,j)-sensor1_data(i,j);
-            if fac1*fac2 <0
-                if fac1 > 0
-                    peak_point(j)=i;
-                    break
-                end
-            end
-        end
+        range = peak_point(j) + 1 : size(sensor1_data, 1);
+        peak_point(j) = app.find_peak(sensor1_data(range, j)) + range(1) - 1;
     end
 end
 
@@ -99,39 +76,17 @@ thres_lev=gtlv;
 threshold_over_point = app.point_over_threshold(sensor2_data(:,1), thres_lev);
 
 % find sensor 1 signal peak point
-for i=threshold_over_point:size(sensor2_data,1)
-    fac1=sensor2_data(i,1)-sensor2_data(i-1,1);
-    fac2=sensor2_data(i+1,1)-sensor2_data(i,1);
-    if fac1*fac2 <0
-        if fac1 > 0
-            peak_point(1)=i;
-            break
-        end
-    end
-end
+peak_point = [];
+range = threshold_over_point : size(sensor2_data, 1);
+peak_point(1) = app.find_peak(sensor2_data(range, 1)) + range(1) - 1;
+
 % find sensor 2 signal peak point
+range = peak_point(1) : size(sensor2_data, 1);
 for j=2:3
-    for i=peak_point(1):size(sensor2_data,1)
-        fac1=sensor2_data(i,j)-sensor2_data(i-1,j);
-        fac2=sensor2_data(i+1,j)-sensor2_data(i,j);
-        if fac1*fac2 <0
-            if fac1 > 0
-                peak_point(j)=i;
-                break
-            end
-        end
-    end
+    peak_point(j) = app.find_peak(sensor2_data(range, j)) + range(1) - 1;
     if peak_point(j)-peak_point(1) < min_point
-        for i=peak_point(j)+1:size(sensor2_data,1)
-            fac1=sensor2_data(i,j)-sensor2_data(i-1,j);
-            fac2=sensor2_data(i+1,j)-sensor2_data(i,j);
-            if fac1*fac2 <0
-                if fac1 > 0
-                    peak_point(j)=i;
-                    break
-                end
-            end
-        end
+        range = peak_point(j) + 1 : size(sensor2_data, 1);
+        peak_point(j) = app.find_peak(sensor2_data(range, j)); + range(1) - 1;
     end
 end
 
