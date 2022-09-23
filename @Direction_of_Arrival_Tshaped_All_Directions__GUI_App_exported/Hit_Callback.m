@@ -30,7 +30,6 @@ signal=ext_data;
 gtlv=str2num(get(handles.Threshold,'string'));
 min_point=6;
 
-for on=1:1
 %% sensor 1 cluster signal processing for angle detection
 sensor1_data=ext_data(:,1:3);
 
@@ -191,7 +190,6 @@ m1=tan(angle1);
 m2=-tan(angle2);
 A=[m2 -1;m1 -1];
 B=[700; 0];
-end
 
 %% result visualization
 sensor1_pos=[0 0];
