@@ -20,9 +20,8 @@ if isempty(thres_over_point)
 end
 
 ext_data=filt_data(thres_over_point-2000:thres_over_point+8000,:);
-signal=ext_data;
 
-gtlv=str2num(get(handles.Threshold,'string'));
+thres_lev=str2num(get(handles.Threshold,'string'));
 min_point=6;
 
 %% sensor 1 cluster signal processing for angle detection
@@ -30,7 +29,6 @@ sensor1_data=ext_data(:,1:3);
 
 % get first wave arrival point
 % active threshold setup
-thres_lev=gtlv;
 threshold_over_point = app.point_over_threshold(sensor1_data(:,1), thres_lev);
 
 if isempty(threshold_over_point)
@@ -72,7 +70,6 @@ axes(handles.cluster2_raw); plot(ext_data(:,[3 1 4])); grid;
 
 % get first wave arrival point
 % active threshold setup
-thres_lev=gtlv;
 threshold_over_point = app.point_over_threshold(sensor2_data(:,1), thres_lev);
 
 % find sensor 1 signal peak point
@@ -116,8 +113,6 @@ angle2=pi-atan((dist21*dt21)/(dist31*dt31));
 %% impact localization
 m1=tan(angle1);
 m2=-tan(angle2);
-A=[m2 -1;m1 -1];
-B=[700; 0];
 
 %% result visualization
 sensor1_pos=[0 0];
