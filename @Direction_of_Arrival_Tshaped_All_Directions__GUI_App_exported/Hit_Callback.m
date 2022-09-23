@@ -21,17 +21,7 @@ app.log('Done recording');
 
 
 handles.Data=data;
-%% preprocessing of measured data
-% data filtering
-SF=handles.rate;
-low=str2num(get(handles.Low,'string'));
-high=str2num(get(handles.High,'string'));
-Wn=[low high]; % high or low Hz % first set
-Fn=SF/2; %nyquist sampling frequency
-set(handles.Nyquist,'string',num2str(Fn));
-n=str2num(get(handles.Order,'string'));
-[b,c]=butter(n,Wn/Fn,'bandpass');
-filt_data=filter(b,c,data); % filtered row signal
+filt_data = app.filter_signal(event, data);
 
 % data extraction
 threshold=5*max(filt_data(1:ceil(0.02*size(data,1)),1));

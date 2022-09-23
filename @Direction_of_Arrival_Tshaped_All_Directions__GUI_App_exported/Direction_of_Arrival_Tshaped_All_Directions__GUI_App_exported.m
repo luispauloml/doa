@@ -527,6 +527,23 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         end
     end
 
+    % Assorted methods
+    methods (Access = public)
+        function filt_data = filter_signal(app, event, data)
+            %% Apply bandpass filter on acquired data.
+            [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app, event);
+            SF = handles.rate;
+            low = str2num(get(handles.Low, 'string'));
+            high = str2num(get(handles.High, 'string'));
+            Wn = [low, high]; % high or low Hz % first set
+            Fn = SF/2; %nyquist sampling frequency
+            set(handles.Nyquist, 'string', num2str(Fn));
+            n = str2num(get(handles.Order, 'string'));
+            [b, c] = butter(n, Wn/Fn, 'bandpass');
+            filt_data = filter(b, c, data); % filtered row signal
+        end
+    end
+
     % App creation and deletion
     methods (Access = public)
 
