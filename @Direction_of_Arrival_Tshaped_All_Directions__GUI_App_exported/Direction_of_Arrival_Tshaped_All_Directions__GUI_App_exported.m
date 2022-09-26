@@ -45,6 +45,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         daq_session     daq.ni.Session
         angles          double
         distance        double
+        last_position   double
     end
 
     % Callbacks that handle component events
@@ -63,7 +64,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             app.setup_device();
             app.angles = [];
             app.distance = distance;
-
+            app.last_position = [];
         end
 
         function [] = log(app, msg)

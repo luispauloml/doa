@@ -10,6 +10,7 @@ m1 = tan(app.angles(1));
 m2 = tan(app.angles(2) + pi);
 x = app.distance / (m1 - m2);
 y = m1 * x;
+app.last_position = [x, y];
 app.log(sprintf('position=(%0.1f, %0.1f)', x, y));
 
 if plot_flag
