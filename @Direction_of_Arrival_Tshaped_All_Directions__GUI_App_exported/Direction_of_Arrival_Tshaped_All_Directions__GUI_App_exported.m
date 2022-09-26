@@ -121,7 +121,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % set(handles.Status,'string',ap);
             
             announce=sprintf('%s%d%s','Single recording is set for ',handles.duration,' s');
-            app.log('Initializaton done...');
+            app.log('Device set up.');
             app.log(announce);
             %%
             beep
@@ -373,11 +373,11 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
 
             % Create Status
             app.Status = uilistbox(app.uipanel5);
-            app.Status.Items = {'Initializing..........'};
+            app.Status.Items = {'Press "Hit" to start.'};
             app.Status.Tag = 'Status';
             app.Status.FontSize = 13;
             app.Status.Position = [21 64 410 170];
-            app.Status.Value = 'Initializing..........';
+            app.Status.Value = 'Press "Hit" to start.';
 
             % Create Hit
             app.Hit = uibutton(app.uipanel5, 'push');
