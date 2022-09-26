@@ -8,6 +8,10 @@ function Hit_Callback(app, event)
 %% start to measure
 data = app.read_data(event);
 app.process_T_array(event, data(:, 1:4));
+if str2num(get(handles.ChannelNumber,'string')) == 8
+    app.process_T_array(event, data(:, 5:8));
+    app.get_source_position('plot');
+end
 
 app.log('Done!!!');
 

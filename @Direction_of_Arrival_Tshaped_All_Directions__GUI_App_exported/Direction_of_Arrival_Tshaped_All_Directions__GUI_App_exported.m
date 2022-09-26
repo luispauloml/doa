@@ -565,6 +565,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         end
 
         output = process_T_array(app, event, data)
+        output = get_source_position(app, varargin)
     end
 
     % Assorted static methods
