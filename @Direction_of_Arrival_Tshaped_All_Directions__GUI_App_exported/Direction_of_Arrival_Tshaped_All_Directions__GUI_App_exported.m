@@ -559,6 +559,8 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             guidata(hObject, handles);
             app.log('Done recording');
         end
+
+        output = process_T_array(app, event, data)
     end
 
     % Assorted static methods
