@@ -44,13 +44,14 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         text16          matlab.ui.control.Label
         daq_session     daq.ni.Session
         angles          double
+        distance        double
     end
 
     % Callbacks that handle component events
     methods (Access = private)
 
         % Code that executes after component creation
-        function Direction_of_Arrival_Tshaped_All_Directions__GUI_OpeningFcn(app, varargin)
+        function Direction_of_Arrival_Tshaped_All_Directions__GUI_OpeningFcn(app, distance, varargin)
             % Create GUIDE-style callback args - Added by Migration Tool
             [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
             
@@ -61,6 +62,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % varargin   command line arguments to Direction_of_Arrival_Tshaped_All_Directions__GUI (see VARARGIN)
             app.setup_device();
             app.angles = [];
+            app.distance = distance;
 
         end
 
