@@ -132,9 +132,11 @@ plot(sensor4_pos(1),sensor4_pos(2),'o','LineWidth',line_width,'Color',[0 0 1]);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   For All DOA
 if threshold_over_point_R<threshold_over_point_L
+    app.angles(end + 1) = angle1;
     plot([0 10000],[0 m1*10000],'LineWidth',line_width,'Color',[1 0 0],'LineStyle','--');
 end
 if threshold_over_point_R>threshold_over_point_L
+    app.angles(end + 1) = angle2;
     plot([0 -10000],[0 m2*10000],'LineWidth',line_width,'Color',[1 0 0],'LineStyle','--');
 end
 

@@ -43,6 +43,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         text15          matlab.ui.control.Label
         text16          matlab.ui.control.Label
         daq_session     daq.ni.Session
+        angles          double
     end
 
     % Callbacks that handle component events
@@ -59,6 +60,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % handles    structure with handles and user data (see GUIDATA)
             % varargin   command line arguments to Direction_of_Arrival_Tshaped_All_Directions__GUI (see VARARGIN)
             app.setup_device();
+            app.angles = [];
 
         end
 
