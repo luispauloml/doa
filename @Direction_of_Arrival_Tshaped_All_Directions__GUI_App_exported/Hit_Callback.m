@@ -6,6 +6,7 @@ function Hit_Callback(app, event)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %% start to measure
+app.angles = [];
 app.setup_device();
 data = app.read_data(event);
 app.process_T_array(event, data(:, 1:4));
