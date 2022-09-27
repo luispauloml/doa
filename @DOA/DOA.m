@@ -4,6 +4,7 @@ classdef DOA < handle
         sampl_rate = 1e6;       % sampling rate (samples/s)
         filter = struct();      % Butterworth filter for signal processing
         threshold = 0.018;      % lower threshold for peak detection (volts)
+        beep_flag = false;      % beep flag
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
@@ -30,6 +31,9 @@ classdef DOA < handle
                         case 'threshold'
                             self.threshold = varargin{i + 1};
                             next_arg_is_value = true;
+                        case 'beep'
+                            self.beep_flag = true;
+                            next_arg_is_value = false;
                         otherwise
                             error(sprintf('invalid argument: %s', arg));
                     end
@@ -56,6 +60,45 @@ classdef DOA < handle
     end
 
     methods (Access = private)
+        function beep(self, varargin)
+            %% Emit a beep sound.
+            %%
+            %% [] = beep([force])
+            %%
+            %% In Windows, it issues and "asterisk" sound.
+            %% It is controlled by the `beep` flag of the object.
+            %%
+            %% Parameters:
+            %% force : logical, optional
+            %%     If present, force beeping even if it is disabled
+            %%     and if the the beep flag is false.
+
+            force = false;
+            if ~isempty(varargin)
+                if length(varargin) > 1
+                    error('Invalid arguments.');
+                else
+                    force = varargin{1};
+                end
+            end
+
+            if force
+                status = beep();
+                flag = self.beep_flag;
+                beep('on');
+                self.beep_flag = true;
+            end
+
+            if self.beep_flag
+                beep();
+            end
+
+            if force
+                beep(status);
+                self.beep_flag = flag;
+            end
+        end
+
         function log(self, msg, varargin)
             %% Print log message to console.
             %%
