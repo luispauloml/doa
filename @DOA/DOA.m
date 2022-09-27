@@ -3,6 +3,7 @@ classdef DOA < handle
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
         filter = struct();      % Butterworth filter for signal processing
+        threshold = 0.018;      % lower threshold for peak detection (volts)
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
@@ -25,6 +26,9 @@ classdef DOA < handle
                             next_arg_is_value = true;
                         case 'ftype'
                             ftyle = arg;
+                            next_arg_is_value = true;
+                        case 'threshold'
+                            self.threshold = varargin{i + 1};
                             next_arg_is_value = true;
                         otherwise
                             error(sprintf('invalid argument: %s', arg));
