@@ -47,6 +47,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         distance        double
         last_position   double
         nchannels       double
+        position_figure matlab.ui.Figure
     end
 
     % Callbacks that handle component events
@@ -591,7 +592,11 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             app.log(sprintf('position=(%0.1f, %0.1f)', x, y));
 
             if plot_flag
-                fig = figure();
+                if isempty(app.position_figure)
+                    app.position_figure = figure();
+                end
+                fig = figure(app.position_figure);
+                clf();
                 set(fig, 'Name', 'Source localization');
                 plot([0, x, 0], [0, y, app.distance], 'k--');
                 hold on;
