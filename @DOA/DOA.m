@@ -25,10 +25,10 @@ classdef DOA < handle
                             self.sampl_rate = varargin{i + 1};
                             next_arg_is_value = true;
                         case 'Wn'
-                            Wn = arg;
+                            Wn = varargin{i + 1};
                             next_arg_is_value = true;
                         case 'ftype'
-                            ftyle = arg;
+                            ftype = varargin{i + 1};
                             next_arg_is_value = true;
                         case 'threshold'
                             self.threshold = varargin{i + 1};
