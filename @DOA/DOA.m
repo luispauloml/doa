@@ -23,14 +23,26 @@ classdef DOA
     end
 
     methods (Access = private)
-        function log(self, msg)
+        function log(self, msg, varargin)
             %% Print log message to console.
             %%
-            %% [] = log(msg)
+            %% [] = log(msg, [force])
             %%
             %% Parameters:
             %% msg : char
             %%     The message to be printed.
+            %% force : logical, optional
+            %%     Force the printing of the message inspite of a
+            %%     `quiet` flag being present.
+
+            force = false;
+            if ~isempty(varargin)
+                if length(varargin) > 1
+                    error('Invalid arguments.');
+                else
+                    force = varargin{1};
+                end
+            end
 
             if self.quiet
                 return
