@@ -132,6 +132,8 @@ classdef DOA < handle
             self.data = data;
             self.log('Done.');
         end
+
+        angle = process_T_array(self, data)
     end
 
     methods (Access = private)
