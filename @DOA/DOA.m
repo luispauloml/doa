@@ -20,7 +20,7 @@ classdef DOA
                             self.sampl_rate = varargin{i + 1};
                             next_arg_is_value = true;
                         otherwise
-                            error('invalid argument');
+                            error(sprintf('invalid argument: %s', arg));
                     end
                 else
                     next_arg_is_value = false;
