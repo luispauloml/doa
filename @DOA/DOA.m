@@ -1,12 +1,12 @@
 classdef DOA < handle
     properties (Access = public)
         beep_flag = false;      % beep flag
+        daq_session;            % DAQ session for NI device
+        data = [];              % data read from DAQ session
         filter = struct();      % Butterworth filter for signal processing
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
         threshold = 0.018;      % lower threshold for peak detection (volts)
-        daq_session;            % DAQ session for NI device
-        data = []               % data read from DAQ session
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
