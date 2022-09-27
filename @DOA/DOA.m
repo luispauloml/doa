@@ -4,6 +4,7 @@ classdef DOA < handle
         daq_session;            % DAQ session for NI device
         data = [];              % data read from DAQ session
         dir_or_loc = "";        % type of experiment being run
+        distance = 50;          % distance between two T-array of sensors
         filter = struct();      % Butterworth filter for signal processing
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
@@ -48,6 +49,9 @@ classdef DOA < handle
                         case 'beep'
                             self.beep_flag = true;
                             next_arg_is_value = false;
+                        case 'distance'
+                            self.distance = varargin{i + 1};
+                            next_arg_is_value = true;
                         otherwise
                             error(sprintf('invalid argument: %s', arg));
                     end
