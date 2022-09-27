@@ -4,7 +4,7 @@ classdef DOA < handle
         daq_session;            % DAQ session for NI device
         data = [];              % data read from DAQ session
         dir_or_loc = "";        % type of experiment being run
-        distance = 50;          % distance between two T-array of sensors
+        distance = 50;          % distance between two T-array of sensors (unit)
         filter = struct();      % Butterworth filter for signal processing
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
@@ -12,6 +12,37 @@ classdef DOA < handle
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
+            %% Realize direction of arrival experiments.
+            %%
+            %% obj = DOA(direction_or_location, device_name, [...])
+            %% obj = DOA(..., [Name, Value])
+            %% obj = DOA(..., ['quiet'])
+            %% obj = DOA(..., ['beep'])
+            %%
+            %% Parameters:
+            %% direction_or_location : {'direction', 'location'}
+            %%     Select the type of experiment.
+            %% device_name : char
+            %%     The name of the NI device to be used for reading
+            %%     data as presented in NI MAX, e.g. 'Dev1'.
+            %% 'quiet'
+            %%     Suppress log messages.
+            %% 'beep'
+            %%     Issue a beep sound when it start reading data.
+            %%
+            %% Name, Value pairs:
+            %% 'distance' : scalar (unit)
+            %%     The distance between two T-arrays, default: 50.
+            %% 'sampl_rate' : scalar (samples/s)
+            %%     The sampling rate, default: 1e6.
+            %% 'ftype' : char
+            %%     The type of filter, default: 'bandpass'.
+            %%     (cf. 'butter' for more information)
+            %% 'Wn' : matrix (Hz)
+            %%     Filter's cutoff frequency, default: [5e3, 15e3].
+            %%     (cf. 'butter' for more information)
+            %% 'threshold' : scalar (V)
+            %%     The lower threshold for detecting a peak.
 
             if ~(strcmp(direction_or_location, 'direction') || ...
                  strcmp(direction_or_location, 'location'))
