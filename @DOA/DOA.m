@@ -1,10 +1,12 @@
 classdef DOA
     properties (Access = public)
         quiet               logical % Flag to print log messages
+        sampl_rate          double  % Sampling rate
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
             self.quiet = false;
+            self.sampl_rate = 1e6;
 
             next_arg_is_value = false;
             for i = 1 : length(varargin)
@@ -14,9 +16,14 @@ classdef DOA
                         case 'quiet'
                             self.quiet = true;
                             next_arg_is_value = false;
+                        case 'sampl_rate'
+                            self.sampl_rate = varargin{i + 1};
+                            next_arg_is_value = true;
                         otherwise
                             error('invalid argument');
                     end
+                else
+                    next_arg_is_value = false;
                 end
             end
         end
