@@ -598,10 +598,10 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
                 plot([0, 0], [0, app.distance], 'bo');
                 plot(x, y, 'r*');
                 axis equal;
-                y_lims = [min(0, y), max(app.distance, y)]
+                y_lims = [min(0, y), max(app.distance, y)];
                 x_lim = max([app.distance, diff(y_lims), 2*x]);
-                xlim([-x_lim/2, +x_lim/2])
-                ylim(y_lims)
+                xlim([-x_lim/2, +x_lim/2]);
+                ylim(y_lims);
                 grid on;
                 legend('Direction', 'Sensors', 'Source');
                 xlabel('x');
