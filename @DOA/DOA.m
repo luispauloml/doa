@@ -2,11 +2,17 @@ classdef DOA
     properties (Access = public)
         quiet               logical % Flag to print log messages
         sampl_rate          double  % Sampling rate
+        filter              struct  % Butterworth filter matrices A and B coefficients
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
             self.quiet = false;
             self.sampl_rate = 1e6;
+
+            %% Filter parameters
+            self.filter = struct();
+            Wn = [5e3, 15e3];
+            ftype = 'bandpass';
 
             next_arg_is_value = false;
             for i = 1 : length(varargin)
@@ -19,6 +25,12 @@ classdef DOA
                         case 'sampl_rate'
                             self.sampl_rate = varargin{i + 1};
                             next_arg_is_value = true;
+                        case 'Wn'
+                            Wn = arg;
+                            next_arg_is_value = true;
+                        case 'ftype'
+                            ftyle = arg;
+                            next_arg_is_value = true;
                         otherwise
                             error(sprintf('invalid argument: %s', arg));
                     end
@@ -26,6 +38,21 @@ classdef DOA
                     next_arg_is_value = false;
                 end
             end
+
+            self.setup_filter(4, Wn, ftype);
+        end
+
+        function setup_filter(self, n, Wn, ftype)
+            %% Setup a Butterworth filter for signal processing.
+            %%
+            %% [] = setup_filter(n, Wn, ftype)
+            %%
+            %% Cf. `doc butter` for information on the parameters.
+
+            Fn = self.sampl_rate/2;
+            [b, c] = butter(n, Wn/Fn, ftype);
+            self.filter.b = b;
+            self.filter.c = c;
         end
     end
 
