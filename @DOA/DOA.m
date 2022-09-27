@@ -3,6 +3,7 @@ classdef DOA < handle
         beep_flag = false;      % beep flag
         daq_session;            % DAQ session for NI device
         data = [];              % data read from DAQ session
+        dir_or_loc = "";        % type of experiment being run
         filter = struct();      % Butterworth filter for signal processing
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
@@ -18,6 +19,7 @@ classdef DOA < handle
                             'direction', 'location', direction_or_location);
                 error(err_msg);
             end
+            self.dir_or_loc = direction_or_location;
 
             %% Filter parameters
             Wn = [5e3, 15e3];
@@ -102,6 +104,7 @@ classdef DOA < handle
                     error(sprintf('setup_device: invalid value for `direction_or_location`: %s',...
                                   direction_or_duration));
             end
+            self.dir_or_loc = direction_or_location;
 
             for i = 1 : nchannels
                 chan_name = sprintf('%s%d','ai',i-1);
