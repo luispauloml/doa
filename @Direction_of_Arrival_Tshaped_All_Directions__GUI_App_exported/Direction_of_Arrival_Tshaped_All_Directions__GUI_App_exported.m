@@ -46,6 +46,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
         angles          double
         distance        double
         last_position   double
+        nchannels       double
     end
 
     % Callbacks that handle component events
@@ -64,6 +65,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             app.angles = [];
             app.distance = distance;
             app.last_position = [];
+            app.nchannels = 0;
         end
 
         function [] = log(app, msg)
@@ -81,6 +83,14 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             % Setup a NI device for the task.
             [hObject, eventdata, handles] = convertToGUIDECallbackArguments(app); %#ok<ASGLU>
 
+            nchannels = str2num(get(handles.ChannelNumber,'string'));
+            if app.nchannels == nchannels;
+                %% Device is already set
+                return
+            else
+                app.nchannels = nchannels;
+            end
+            app.log('Setting up device.');
             daq.reset();
             daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true);
             ap = daq.createSession('ni'); % ap as ADD Project
@@ -88,7 +98,6 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             %%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Define measurment parameters
-            handles.numb_channel = str2num(get(handles.ChannelNumber,'string'));               % this method uses 4 sensors to detect impact on all area
             handles.rate = str2num(get(handles.SampleRate,'string'));                          % sampling rate  must be less than 2E6
             handles.duration = str2num(get(handles.Duration,'string'));                        % measuring time
             handles.filename = get(handles.Filename,'string');            % filename to save
@@ -99,7 +108,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% making analog input channel, choose device1 and channel
             %voltage,frequency, etc..
-            for i=1:handles.numb_channel
+            for i=1:app.nchannels
                 chan_name=sprintf('%s%d','ai',i-1);
                 ap.addAnalogInputChannel('Dev2',chan_name, 'Voltage');
             end
@@ -112,7 +121,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             ap.IsNotifyWhenDataAvailableExceedsAuto=true;
             ap.NotifyWhenDataAvailableExceeds = handles.rate/10;
             
-            for i=1:handles.numb_channel
+            for i=1:app.nchannels
                 ap.Channels(i).Range=[-measuring_range,measuring_range];
             end
 
@@ -555,7 +564,7 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
             data = app.daq_session.startForeground();
 
             %% self calibration
-            for i = 1 : handles.numb_channel
+            for i = 1 : app.nchannels
                 data(:,i) = data(:,i) - data(1,i);
             end
 
