@@ -44,7 +44,7 @@ classdef DOA < handle
                 end
             end
 
-            self.setup_filter(4, Wn, ftype);
+            self.setup_filter(5, Wn, ftype);
             self.setup_device(device_name, direction_or_location);
         end
 
