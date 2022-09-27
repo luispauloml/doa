@@ -1,16 +1,11 @@
-classdef DOA
+classdef DOA < handle
     properties (Access = public)
-        quiet               logical % Flag to print log messages
-        sampl_rate          double  % Sampling rate
-        filter              struct  % Butterworth filter matrices A and B coefficients
+        quiet = false;          % quiet flag
+        sampl_rate = 1e6;       % sampling rate (samples/s)
+        filter = struct();      % Butterworth filter for signal processing
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
-            self.quiet = false;
-            self.sampl_rate = 1e6;
-
-            %% Filter parameters
-            self.filter = struct();
             Wn = [5e3, 15e3];
             ftype = 'bandpass';
 
