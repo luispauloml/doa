@@ -10,6 +10,16 @@ classdef DOA < handle
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
+
+            if ~(strcmp(direction_or_location, 'direction') || ...
+                 strcmp(direction_or_location, 'location'))
+                err_msg = ...
+                   sprintf( "DOA: 'direction_or_location' should be either '%s' or '%s', got '%s'.",...
+                            'direction', 'location', direction_or_location);
+                error(err_msg);
+            end
+
+            %% Filter parameters
             Wn = [5e3, 15e3];
             ftype = 'bandpass';
 
