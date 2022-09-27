@@ -6,6 +6,7 @@ classdef DOA < handle
         sampl_rate = 1e6;       % sampling rate (samples/s)
         threshold = 0.018;      % lower threshold for peak detection (volts)
         daq_session;            % DAQ session for NI device
+        data = []               % data read from DAQ session
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
@@ -109,6 +110,27 @@ classdef DOA < handle
 
             self.daq_session = ap;
             self.log('Device set up.');
+        end
+
+        function data = read_data(self)
+            %% Read signal from DAQ session.
+            %%
+            %% data = read_data()
+            %%
+            %% Returns `data` as matrix with the signal read from the
+            %% DAQ session of current object.
+
+            self.beep();
+            self.log('Reading signal...');
+            data = self.daq_session.startForeground();
+
+            %% Self calibration
+            for i = 1 : size(data, 2)
+                data(:,i) = data(:,i) - data(1,i);
+            end
+
+            self.data = data;
+            self.log('Done.');
         end
     end
 
