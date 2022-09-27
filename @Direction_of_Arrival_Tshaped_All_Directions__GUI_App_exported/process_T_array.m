@@ -146,3 +146,4 @@ hold off; set(gca,'Xlim',[-400 400],'Ylim',[-100 600],'FontSize',20,'FontWeight'
 
 
 app.log('Done ploting.');
+app.log(sprintf('angle=%0.f°', app.angles(end)/pi*180));

@@ -606,7 +606,8 @@ classdef Direction_of_Arrival_Tshaped_All_Directions__GUI_App_exported < matlab.
                 legend('Direction', 'Sensors', 'Source');
                 xlabel('x');
                 ylabel('y');
-                title(sprintf('Position: x=%0.1f, y=%0.1f', x, y));
+                title(sprintf('Position: x=%0.1f, y=%0.1f\nAngles: a=%0.f°, b=%0.f°',...
+                              x, y, app.angles(1)/pi*180, app.angles(2)/pi*180));
             end
         end
     end
