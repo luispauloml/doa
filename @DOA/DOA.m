@@ -1,10 +1,10 @@
 classdef DOA < handle
     properties (Access = public)
+        beep_flag = false;      % beep flag
+        filter = struct();      % Butterworth filter for signal processing
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
-        filter = struct();      % Butterworth filter for signal processing
         threshold = 0.018;      % lower threshold for peak detection (volts)
-        beep_flag = false;      % beep flag
     end
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
