@@ -151,6 +151,41 @@ classdef DOA < handle
         end
 
         angle = process_T_array(self, data)
+
+        function varargout = run(self)
+            %% Execute the experiment.
+            %%
+            %% [a] = run()
+            %% [a, b, x, y] = run()
+            %%
+            %% If the experiment is set to detect direction of
+            %% arrival, returns `a` as the angle of arrival. If set to
+            %% locate the source, returns:
+            %%  - `a` : the angle w.r.t to the first T-array (rad),
+            %%  - `b` : the angle w.r.t to the second T-array (rad),
+            %%  - `x` : the the x-position of the source (unit),
+            %%  - `y` : the y-position of the source (unit).
+            %%
+            %% If an angle cannot be computed, it will be an empty
+            %% matrix and so will `x` and `y`.
+
+            self.read_data();
+            a = self.process_T_array(self.data(:, 1:4));
+            if strcmp(self.dir_or_loc, 'location')
+                b = self.process_T_array(self.data(:, 5:8));
+            else
+                varargout = {a};
+                return
+            end
+
+            if isempty(b)
+                varargout = {a, [], [], []};
+                return
+            end
+
+            [x, y] = self.get_source_position(a, b);
+            varargout = {a, b, x, y};
+        end
     end
 
     methods (Access = private)
