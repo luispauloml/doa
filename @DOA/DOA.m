@@ -209,12 +209,13 @@ classdef DOA < handle
                 return
             end
 
-            if isempty(b)
-                varargout = {a, [], [], []};
-                return
+            if ~isempty(a) && ~isempty(b)
+                [x, y] = self.get_source_position(a, b);
+            else
+                x = [];
+                y = [];
             end
 
-            [x, y] = self.get_source_position(a, b);
             varargout = {a, b, x, y};
         end
     end
