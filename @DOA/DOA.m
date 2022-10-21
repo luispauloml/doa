@@ -2,13 +2,14 @@ classdef DOA < handle
     properties (Access = public)
         beep_flag = false;      % beep flag
         daq_session;            % DAQ session for NI device
-        data = [];              % data read from DAQ session
+        data = [];              % post-processed data read from DAQ session
         dir_or_loc = "";        % type of experiment being run
         distance = 50;          % distance between two T-array of sensors (unit)
         filter = struct();      % Butterworth filter for signal processing
         overwrite_plots = true; % flag to overwrite plot results
         plots_flag = false      % flag to plot results
         quiet = false;          % quiet flag
+        raw_data = [];          % raw data read from DAQ session
         sampl_rate = 1e6;       % sampling rate (samples/s)
         threshold = 0.018;      % lower threshold for peak detection (volts)
     end
@@ -189,19 +190,48 @@ classdef DOA < handle
             %% data = read_data()
             %%
             %% Returns `data` as matrix with the signal read from the
-            %% DAQ session of current object.
+            %% DAQ session of current object. The data read is stored
+            %% in the object's `raw_data` property.
 
             self.beep();
             self.log('Reading signal...');
             data = self.daq_session.startForeground();
+            self.raw_data = data;
+        end
+
+        function data = postprocess(self, varargin)
+            %% Post process data read from DAQ session.
+            %%
+            %% data = postprocess([raw_data])
+            %%
+            %% Returns `data` with data post-processed as follows:
+            %% - self calibration,
+            %% - filter according to the object's parameters.
+            %%
+            %% Parameters:
+            %% raw_data : double
+            %%     A matrix whose columns are signals from a single
+            %%     channel. If not provided, read data from object's
+            %%     `raw_data` property.
+
+            switch length(varargin)
+                case 0
+                    data = self.raw_data;
+                case 1
+                    data = varargin{1};
+                otherwise
+                    error("Only one optional argument expected: 'raw_data'");
+            end
+
+            self.log('Post processing data...');
 
             %% Self calibration
             for i = 1 : size(data, 2)
                 data(:,i) = data(:,i) - data(1,i);
             end
 
+            data = filter(self.filter.b, self.filter.c, data);
             self.data = data;
-            self.log('Done.');
         end
 
         angle = process_T_array(self, data, varargin)

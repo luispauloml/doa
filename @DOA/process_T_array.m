@@ -33,7 +33,7 @@ end
 
 angle = [];
 NO_IMPACT_MSG = 'No peak found.';
-filt_data = filter(self.filter.b, self.filter.c, data);
+filt_data = data;
 
 % data extraction
 threshold = 5 * max(filt_data(1 : ceil(0.02 * size(data, 1)), 1));
