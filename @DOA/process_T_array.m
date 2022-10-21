@@ -33,18 +33,12 @@ end
 
 angle = [];
 NO_IMPACT_MSG = 'No peak found.';
-filt_data = data;
-
-% data extraction
-threshold = 5 * max(filt_data(1 : ceil(0.02 * size(data, 1)), 1));
-thres_over_point = self.point_over_threshold(filt_data(:, 1), threshold);
-
-if isempty(thres_over_point)
+if isempty(data)
     self.log(NO_IMPACT_MSG);
     return
 end
 
-ext_data = filt_data(thres_over_point - 2000 : thres_over_point + 8000, :);
+ext_data = data;
 
 thres_lev = self.threshold;
 min_point = 6;
@@ -116,11 +110,11 @@ if plot_flag
     self.log('Plotting...');
     figure(plot_figure);
     clf();
-    plot(ext_data(2000:end, :));
+    plot(ext_data);
     hold on;
-    plot(peaks_idx - 2000 + 1, peaks_vals, 'ko');
+    plot(peaks_idx, peaks_vals, 'ko');
     grid on;
-    xlim([1, 5*max(peaks_idx - 2000)]);
+    xlim([1, 5*max(peaks_idx)]);
     legend('Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Peaks');
     xlabel('Sample')
     ylabel('Amplitude')

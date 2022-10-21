@@ -205,14 +205,17 @@ classdef DOA < handle
             %% data = postprocess([raw_data])
             %%
             %% Returns `data` with data post-processed as follows:
-            %% - self calibration,
-            %% - filter according to the object's parameters.
+            %% - self calibration
+            %% - filter according to the object's parameters
+            %% - trimming
             %%
             %% Parameters:
             %% raw_data : double
             %%     A matrix whose columns are signals from a single
             %%     channel. If not provided, read data from object's
             %%     `raw_data` property.
+            %%
+            %% Note: If trimming fails, returns an empty matrix.
 
             switch length(varargin)
                 case 0
@@ -231,6 +234,16 @@ classdef DOA < handle
             end
 
             data = filter(self.filter.b, self.filter.c, data);
+
+            %% Trimming
+            threshold = 5 * max(data(1 : ceil(0.02 * size(data, 1)), 1));
+            idx = self.point_over_threshold(data(:, 1), threshold);
+            if isempty(idx)
+                data = [];
+            else
+                data = data(idx : idx + 10000, :);
+            end
+
             self.data = data;
         end
 
