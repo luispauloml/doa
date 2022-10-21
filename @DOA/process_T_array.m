@@ -38,17 +38,14 @@ if isempty(data)
     return
 end
 
-ext_data = data;
-
-thres_lev = self.threshold;
 min_point = 6;
 
 %% sensor 1 cluster signal processing for angle detection
-sensor1_data = ext_data(:, 1 : 3);
+sensor1_data = data(:, 1 : 3);
 
 % get first wave arrival point
 % active threshold setup
-threshold_over_point = self.point_over_threshold(sensor1_data(:, 1), thres_lev);
+threshold_over_point = self.point_over_threshold(sensor1_data(:, 1), self.threshold);
 
 if isempty(threshold_over_point)
     self.log(NO_IMPACT_MSG);
@@ -79,11 +76,11 @@ dist31 = 1;
 angle1 = atan((dist21 * dt21) / (dist31 * dt31));
 
 %% sensor 2 cluster signal processing for angle detection
-sensor2_data = ext_data(:, [1 2 4]);
+sensor2_data = data(:, [1 2 4]);
 
 % get first wave arrival point
 % active threshold setup
-threshold_over_point = self.point_over_threshold(sensor2_data(:, 1), thres_lev);
+threshold_over_point = self.point_over_threshold(sensor2_data(:, 1), self.threshold);
 
 % find sensor 1 signal peak point
 peak_point = [];
@@ -103,14 +100,14 @@ end
 peaks_idx([1, 2, 4]) = peak_point;
 peaks_vals = [];
 for i = 1 : 4
-    peaks_vals(i) = ext_data(peaks_idx(i), i);
+    peaks_vals(i) = data(peaks_idx(i), i);
 end
 
 if plot_flag
     self.log('Plotting...');
     figure(plot_figure);
     clf();
-    plot(ext_data);
+    plot(data);
     hold on;
     plot(peaks_idx, peaks_vals, 'ko');
     grid on;
@@ -120,8 +117,8 @@ if plot_flag
     ylabel('Amplitude')
 end
 
-threshold_over_point_L = self.point_over_threshold(ext_data(:, 3), thres_lev);
-threshold_over_point_R = self.point_over_threshold(ext_data(:, 4), thres_lev);
+threshold_over_point_L = self.point_over_threshold(data(:, 3), self.threshold);
+threshold_over_point_R = self.point_over_threshold(data(:, 4), self.threshold);
 
 dt21 = peak_point(2) - peak_point(1);
 dt31 = peak_point(3) - peak_point(1);
