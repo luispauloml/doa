@@ -247,7 +247,7 @@ classdef DOA < handle
             self.data = data;
         end
 
-        angle = process_T_array(self, data, varargin)
+        [angle, peaks_idx] = process_T_array(self, data, varargin)
 
         function varargout = run(self)
             %% Execute the experiment.

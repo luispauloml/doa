@@ -1,10 +1,10 @@
-function angle = process_T_array(self, data, varargin)
+function [angle, peaks_idx] = process_T_array(self, data, varargin)
 %% Process data from a T-array of sensors.
 %%
-%% angle = process_T_array(data, [plot_figure])
+%% [angle, peaks_idx] = process_T_array(data, [plot_figure])
 %%
 %% Calculate the angle of arrival of the wave from the signal in
-%% `data`. If no angle is found, returns an empty matrix.
+%% `data`.
 %% 
 %% Parameters:
 %% data : matrix
@@ -14,6 +14,14 @@ function angle = process_T_array(self, data, varargin)
 %%     A figure in which to plot results. If given, the filtered
 %%     signal and the peaks will be plotted. By default, nothing
 %%     is plotted.
+%%
+%% Returns:
+%% angle : double
+%%     The angle of arriavle of the wave. If no angle is found,
+%%     returns an empty matrix.
+%% peaks_idx : 1x4 matrix
+%%     The indeces of the peaks in each column of input `data`. If
+%%     no angle is found, returns an empty matrix.
 
 plot_flag = false;
 switch length(varargin)
