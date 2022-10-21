@@ -6,10 +6,17 @@ classdef DOA < handle
         dir_or_loc = "";        % type of experiment being run
         distance = 50;          % distance between two T-array of sensors (unit)
         filter = struct();      % Butterworth filter for signal processing
+        overwrite_plots = true; % flag to overwrite plot results
+        plots_flag = false      % flag to plot results
         quiet = false;          % quiet flag
         sampl_rate = 1e6;       % sampling rate (samples/s)
         threshold = 0.018;      % lower threshold for peak detection (volts)
     end
+
+    properties (Access = private)
+        plot_figures = struct([]); % `Figure` for debugging
+    end
+
     methods (Access = public)
         function self = DOA(direction_or_location, device_name, varargin)
             %% Realize direction of arrival experiments.
@@ -18,6 +25,7 @@ classdef DOA < handle
             %% obj = DOA(..., [Name, Value])
             %% obj = DOA(..., ['quiet'])
             %% obj = DOA(..., ['beep'])
+            %% obj = DOA(..., ['plots'])
             %%
             %% Parameters:
             %% direction_or_location : {'direction', 'location'}
@@ -29,6 +37,8 @@ classdef DOA < handle
             %%     Suppress log messages.
             %% 'beep'
             %%     Issue a beep sound when it start reading data.
+            %% 'plots'
+            %%     Plot results.
             %%
             %% Name, Value pairs:
             %% 'distance' : scalar (unit)
@@ -44,6 +54,12 @@ classdef DOA < handle
             %% 'threshold' : scalar (V)
             %%     The lower threshold for detecting a peak, default:
             %%     0.018.
+            %% 'overwite_plots' : logical
+            %%     If 'plots' is provided, this value tells whether to
+            %%     create new figures for every run, or to overwrite
+            %%     the last figures. If true, do not create new figure
+            %%     and overwrite the last ones; if false, create new
+            %%     figures. Default is true.
 
             if ~(strcmp(direction_or_location, 'direction') || ...
                  strcmp(direction_or_location, 'location'))
@@ -83,6 +99,12 @@ classdef DOA < handle
                             next_arg_is_value = false;
                         case 'distance'
                             self.distance = varargin{i + 1};
+                            next_arg_is_value = true;
+                        case 'plots'
+                            self.plots_flag = true;
+                            next_arg_is_value = false;
+                        case 'overwrite_plots'
+                            self.overwrite_plots = varargin{i + 1};
                             next_arg_is_value = true;
                         otherwise
                             error(sprintf('invalid argument: %s', arg));
@@ -182,7 +204,7 @@ classdef DOA < handle
             self.log('Done.');
         end
 
-        angle = process_T_array(self, data)
+        angle = process_T_array(self, data, varargin)
 
         function varargout = run(self)
             %% Execute the experiment.
@@ -201,10 +223,42 @@ classdef DOA < handle
             %% If an angle cannot be computed, it will be an empty
             %% matrix and so will `x` and `y`.
 
+            if self.plots_flag
+                if self.overwrite_plots && ~isempty(self.plot_figures)
+                    %% Check for closed figures
+                    fields = fieldnames(self.plot_figures);
+                    for i = 1 : length(fields)
+                        fig = self.plot_figures.(fields{i});
+                        if ~isvalid(fig)
+                            self.plot_figures.(fields{i}) = figure();
+                        end
+                    end
+                else
+                    self.plot_figures = ...
+                        struct('sensor_array_1', figure());
+                    if strcmp(self.dir_or_loc, 'location')
+                        self.plot_figures.sensor_array_2 = figure();
+                    end
+                end
+            end
+
             self.read_data();
-            a = self.process_T_array(self.data(:, 1:4));
+
+            fig_cell = {};
+            if self.plots_flag
+                fig = self.plot_figures.sensor_array_1;
+                set(fig, 'Name', 'Sensor Array 1');
+                fig_cell = {fig};
+            end
+            a = self.process_T_array(self.data(:, 1:4), fig_cell{:});
+
             if strcmp(self.dir_or_loc, 'location')
-                b = self.process_T_array(self.data(:, 5:8));
+                if self.plots_flag
+                    fig = self.plot_figures.sensor_array_2;
+                    set(fig, 'Name', 'Sensor Array 2');
+                    fig_cell = {fig};
+                end
+                b = self.process_T_array(self.data(:, 5:8), fig_cell{:});
             else
                 varargout = {a};
                 return

@@ -1,7 +1,7 @@
-function angle = process_T_array(self, data)
+function angle = process_T_array(self, data, varargin)
 %% Process data from a T-array of sensors.
 %%
-%% angle = process_T_array(data)
+%% angle = process_T_array(data, [plot_figure])
 %%
 %% Calculate the angle of arrival of the wave from the signal in
 %% `data`. If no angle is found, returns an empty matrix.
@@ -10,6 +10,26 @@ function angle = process_T_array(self, data)
 %% data : matrix
 %%     A 4-column matrix with the signal read from a T-array of
 %%     sensors.
+%% plot_figure : matlab.ui.Figure
+%%     A figure in which to plot results. If given, the filtered
+%%     signal and the peaks will be plotted. By default, nothing
+%%     is plotted.
+
+plot_flag = false;
+switch length(varargin)
+    case 0
+        %% do nothing
+    case 1
+        try
+            plot_figure = varargin{1};
+            figure(plot_figure);
+            plot_flag = true;
+        catch
+            error(sprintf("A 'matlab.ui.Figure' was expected as optional argument"));
+        end
+    otherwise
+        error("Only one optional argument is accepted: 'plot_figure'");
+end
 
 angle = [];
 NO_IMPACT_MSG = 'No peak found.';
@@ -56,6 +76,8 @@ for j = 2 : 3
     end
 end
 
+peaks_idx(3) = peak_point(3);
+
 dt21 = peak_point(2) - peak_point(1);
 dt31 = peak_point(3) - peak_point(1);
 dist21 = 1;
@@ -84,6 +106,25 @@ for j = 2 : 3
     end
 end
 
+peaks_idx([1, 2, 4]) = peak_point;
+peaks_vals = [];
+for i = 1 : 4
+    peaks_vals(i) = ext_data(peaks_idx(i), i);
+end
+
+if plot_flag
+    self.log('Plotting...');
+    figure(plot_figure);
+    clf();
+    plot(ext_data(2000:end, :));
+    hold on;
+    plot(peaks_idx - 2000 + 1, peaks_vals, 'ko');
+    grid on;
+    xlim([1, 5*max(peaks_idx - 2000)]);
+    legend('Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Peaks');
+    xlabel('Sample')
+    ylabel('Amplitude')
+end
 
 threshold_over_point_L = self.point_over_threshold(ext_data(:, 3), thres_lev);
 threshold_over_point_R = self.point_over_threshold(ext_data(:, 4), thres_lev);
