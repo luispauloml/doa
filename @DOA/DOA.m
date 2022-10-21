@@ -42,7 +42,8 @@ classdef DOA < handle
             %%     Filter's cutoff frequency, default: [5e3, 15e3].
             %%     (cf. 'butter' for more information)
             %% 'threshold' : scalar (V)
-            %%     The lower threshold for detecting a peak.
+            %%     The lower threshold for detecting a peak, default:
+            %%     0.018.
 
             if ~(strcmp(direction_or_location, 'direction') || ...
                  strcmp(direction_or_location, 'location'))
