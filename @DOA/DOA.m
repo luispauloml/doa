@@ -268,6 +268,7 @@ classdef DOA < handle
             %% matrix and so will `x` and `y`.
 
             self.read_data();
+            self.postprocess();
             [a, peaks_idx] = self.process_T_array(self.data(:, 1:4));
             if strcmp(self.dir_or_loc, 'location')
                 [b, peaks_idx(end + 1:8)] = self.process_T_array(self.data(:, 5:8));
