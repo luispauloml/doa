@@ -1,7 +1,7 @@
-function [angle, peaks_idx] = process_T_array(self, data, varargin)
+function [angle, peaks_idx] = process_T_array(self, data)
 %% Process data from a T-array of sensors.
 %%
-%% [angle, peaks_idx] = process_T_array(data, [plot_figure])
+%% [angle, peaks_idx] = process_T_array(data)
 %%
 %% Calculate the angle of arrival of the wave from the signal in
 %% `data`.
@@ -10,10 +10,6 @@ function [angle, peaks_idx] = process_T_array(self, data, varargin)
 %% data : matrix
 %%     A 4-column matrix with the signal read from a T-array of
 %%     sensors.
-%% plot_figure : matlab.ui.Figure
-%%     A figure in which to plot results. If given, the filtered
-%%     signal and the peaks will be plotted. By default, nothing
-%%     is plotted.
 %%
 %% Returns:
 %% angle : double
@@ -22,22 +18,6 @@ function [angle, peaks_idx] = process_T_array(self, data, varargin)
 %% peaks_idx : 1x4 matrix
 %%     The indeces of the peaks in each column of input `data`. If
 %%     no angle is found, returns an empty matrix.
-
-plot_flag = false;
-switch length(varargin)
-    case 0
-        %% do nothing
-    case 1
-        try
-            plot_figure = varargin{1};
-            figure(plot_figure);
-            plot_flag = true;
-        catch
-            error(sprintf("A 'matlab.ui.Figure' was expected as optional argument"));
-        end
-    otherwise
-        error("Only one optional argument is accepted: 'plot_figure'");
-end
 
 angle = [];
 NO_IMPACT_MSG = 'No peak found.';
@@ -106,24 +86,6 @@ for j = 2 : 3
 end
 
 peaks_idx([1, 2, 4]) = peak_point;
-peaks_vals = [];
-for i = 1 : 4
-    peaks_vals(i) = data(peaks_idx(i), i);
-end
-
-if plot_flag
-    self.log('Plotting...');
-    figure(plot_figure);
-    clf();
-    plot(data);
-    hold on;
-    plot(peaks_idx, peaks_vals, 'ko');
-    grid on;
-    xlim([1, 5*max(peaks_idx)]);
-    legend('Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Peaks');
-    xlabel('Sample')
-    ylabel('Amplitude')
-end
 
 threshold_over_point_L = self.point_over_threshold(data(:, 3), self.threshold);
 threshold_over_point_R = self.point_over_threshold(data(:, 4), self.threshold);

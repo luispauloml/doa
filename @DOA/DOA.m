@@ -7,6 +7,7 @@ classdef DOA < handle
         distance = 50;          % distance between two T-array of sensors (unit)
         filter = struct();      % Butterworth filter for signal processing
         overwrite_plots = true; % flag to overwrite plot results
+        peaks_idx = [];         % indeces of peaks
         plots_flag = false      % flag to plot results
         quiet = false;          % quiet flag
         raw_data = [];          % raw data read from DAQ session
@@ -266,55 +267,83 @@ classdef DOA < handle
             %% If an angle cannot be computed, it will be an empty
             %% matrix and so will `x` and `y`.
 
-            if self.plots_flag
-                if self.overwrite_plots && ~isempty(self.plot_figures)
-                    %% Check for closed figures
-                    fields = fieldnames(self.plot_figures);
-                    for i = 1 : length(fields)
-                        fig = self.plot_figures.(fields{i});
-                        if ~isvalid(fig)
-                            self.plot_figures.(fields{i}) = figure();
-                        end
-                    end
-                else
-                    self.plot_figures = ...
-                        struct('sensor_array_1', figure());
-                    if strcmp(self.dir_or_loc, 'location')
-                        self.plot_figures.sensor_array_2 = figure();
-                    end
-                end
-            end
-
             self.read_data();
-
-            fig_cell = {};
-            if self.plots_flag
-                fig = self.plot_figures.sensor_array_1;
-                set(fig, 'Name', 'Sensor Array 1');
-                fig_cell = {fig};
-            end
-            a = self.process_T_array(self.data(:, 1:4), fig_cell{:});
-
+            [a, peaks_idx] = self.process_T_array(self.data(:, 1:4));
             if strcmp(self.dir_or_loc, 'location')
-                if self.plots_flag
-                    fig = self.plot_figures.sensor_array_2;
-                    set(fig, 'Name', 'Sensor Array 2');
-                    fig_cell = {fig};
+                [b, peaks_idx(end + 1:8)] = self.process_T_array(self.data(:, 5:8));
+                if ~isempty(a) && ~isempty(b)
+                    [x, y] = self.get_source_position(a, b);
+                else
+                    x = [];
+                    y = [];
                 end
-                b = self.process_T_array(self.data(:, 5:8), fig_cell{:});
+                varargout = {a, b, x, y};
             else
                 varargout = {a};
-                return
             end
+            self.peaks_idx = peaks_idx;
 
-            if ~isempty(a) && ~isempty(b)
-                [x, y] = self.get_source_position(a, b);
+            if self.plots_flag
+                self.plot_results(self.overwrite_plots);
+            end
+        end
+
+        function [] = plot_results(self, overwrite)
+            %% Generate plots with results
+            %%
+            %% [] = plot_results(overwrite)
+            %%
+            %% Parameters:
+            %% overwrite : logical
+            %%     If true, overwrite previously used figures. If
+            %%     false, create new ones instead.
+
+            self.log('Plotting...');
+            if self.overwrite_plots && ~isempty(self.plot_figures)
+                %% Check for closed figures
+                fields = fieldnames(self.plot_figures);
+                for i = 1 : length(fields)
+                    fig = self.plot_figures.(fields{i});
+                    if ~isvalid(fig)
+                        self.plot_figures.(fields{i}) = figure();
+                    end
+                end
             else
-                x = [];
-                y = [];
+                self.plot_figures = ...
+                    struct('signals_figure', figure());
             end
 
-            varargout = {a, b, x, y};
+            peaks_vals = [];
+            for i = 1 : length(self.peaks_idx)
+                peaks_vals(i) = self.data(self.peaks_idx(i), i);
+            end
+
+            legends = {'Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Peaks'};
+            labels = @(x, y, t) [xlabel(x), ylabel(y), title(t)];
+            switch self.dir_or_loc
+                case 'direction'
+                    N = 1;
+                case 'location'
+                    N = 2;
+            end
+            
+            fig = self.plot_figures.signals_figure;
+            figure(fig);
+            clf();
+            set(fig, 'Name', 'Signals');
+            for i = 1 : N
+                idx = [0 : 3] * i + 1;
+                subplot(N, 1, i);
+                plot(self.data(:, idx));
+                hold on;
+                plot(self.peaks_idx(idx), peaks_vals(idx), 'ko');
+                grid on;
+                legend(legends{:});
+                xlim([1, 5*max(self.peaks_idx(idx(1)))]);
+                labels('Sample', 'Amplitude',...
+                       sprintf('Sensor Array %i', i));
+                hold off;
+            end
         end
     end
 
