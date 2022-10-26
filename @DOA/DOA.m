@@ -335,18 +335,29 @@ classdef DOA < handle
             end
         end
 
-        function [] = plot_results(self, overwrite)
+        function [] = plot_results(self, varargin)
             %% Generate plots with results
             %%
-            %% [] = plot_results(overwrite)
+            %% [] = plot_results([overwrite])
             %%
             %% Parameters:
-            %% overwrite : logical
+            %% overwrite : logical, optional
             %%     If true, overwrite previously used figures. If
-            %%     false, create new ones instead.
+            %%     false, create new ones instead. If not given, use
+            %%     `overwrite_plot` property's value instead.
 
             self.log('Plotting...');
-            if self.overwrite_plots && ~isempty(self.plot_figures)
+
+            switch length(varargin)
+                case 0
+                    overwrite = self.overwrite_plots;
+                case 1
+                    overwrite = varargin{1};
+                otherwise
+                    error("Only one optional value was expected: 'overwrite'");
+            end
+
+            if overwrite && ~isempty(self.plot_figures)
                 %% Check for closed figures
                 fields = fieldnames(self.plot_figures);
                 for i = 1 : length(fields)
@@ -379,14 +390,14 @@ classdef DOA < handle
             clf();
             set(fig, 'Name', 'Signals');
             for i = 1 : N
-                idx = [0 : 3] * i + 1;
+                idx = [1 : 4] + 4*(i - 1);
                 subplot(N, 1, i);
                 plot(self.data(:, idx));
                 hold on;
                 plot(self.peaks_idx(idx), peaks_vals(idx), 'ko');
                 grid on;
                 legend(legends{:});
-                xlim([1, 5*max(self.peaks_idx(idx(1)))]);
+                xlim([1, 2*max(self.peaks_idx)]);
                 labels('Sample', 'Amplitude',...
                        sprintf('Sensor Array %i', i));
                 hold off;
