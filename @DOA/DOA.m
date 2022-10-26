@@ -246,10 +246,15 @@ classdef DOA < handle
 
             %% Trimming
             threshold = 5 * max(data(1 : ceil(0.02 * size(data, 1)), 1));
-            idx = self.point_over_threshold(data(:, 1), threshold);
+            idx = zeros([1, size(data, 2)]);
+            for i = 1 : size(data, 2)
+                idx(i) = self.point_over_threshold(data(:, i), threshold);
+            end
+            idx = idx(find(idx)); % Select only non-zero values
             if isempty(idx)
                 data = [];
             else
+                idx = min(idx);
                 data = data(idx : idx + 10000, :);
             end
 
