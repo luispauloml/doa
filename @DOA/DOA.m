@@ -12,7 +12,7 @@ classdef DOA < handle
         quiet = false;          % quiet flag
         raw_data = [];          % raw data read from DAQ session
         sampl_rate = 1e6;       % sampling rate (samples/s)
-        threshold = 0.018;      % lower threshold for peak detection (volts)
+        threshold = [];         % lower threshold for peak detection (volts)
     end
 
     properties (Access = private)
@@ -54,8 +54,9 @@ classdef DOA < handle
             %%     Filter's cutoff frequency, default: [5e3, 15e3].
             %%     (cf. 'butter' for more information)
             %% 'threshold' : scalar (V)
-            %%     The lower threshold for detecting a peak, default:
-            %%     0.018.
+            %%     The lower threshold for detecting a peak. If not
+            %%     given, threshold will be computed
+            %%     automaticallity with `calibrate_threshold`.
             %% 'overwite_plots' : logical
             %%     If 'plots' is provided, this value tells whether to
             %%     create new figures for every run, or to overwrite
@@ -118,6 +119,9 @@ classdef DOA < handle
 
             self.setup_filter(5, Wn, ftype);
             self.setup_device(device_name, direction_or_location);
+            if isempty(self.threshold)
+                self.calibrate_threshold();
+            end
         end
 
         function setup_filter(self, n, Wn, ftype)
@@ -387,6 +391,50 @@ classdef DOA < handle
                        sprintf('Sensor Array %i', i));
                 hold off;
             end
+        end
+
+        function [threshold] = calibrate_threshold(self, varargin)
+            %% Calibrate lower threshold for peak detection.
+            %%
+            %% [threshold] = calibrate_threshold(self, [factor])
+            %%
+            %% Sets and returns the threshold for peak detection to
+            %% `factor` times the maximum RMS value among all channels
+            %% when there is no impact and after filtering their
+            %% signals.
+            %%
+            %% Parameters:
+            %% factor : double, optional
+            %%     The factor to which the maximum RMS value among the
+            %%     channels will be multiplied to define the
+            %%     threshold. If not given, default is 5.
+
+            self.log('Calibrating threshold...');
+
+            switch length(varargin)
+                case 0
+                    factor = 5;
+                case 1
+                    factor = varargin{1};
+                otherwise
+                    error("Only one optional parameter is allowed: 'factor'");
+            end
+
+            %% Silence everything
+            old_beep = beep();
+            beep('off');
+            old_quiet = self.quiet;
+            self.quiet = true;
+
+            self.read_data();
+            data = filter(self.filter.b, self.filter.c, self.raw_data);
+            threshold = factor * max(rms(data));
+            self.threshold = threshold;
+
+            %% Restore values
+            beep(old_beep);
+            self.quiet = old_quiet;
+            self.raw_data = [];
         end
     end
 
