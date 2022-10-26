@@ -641,7 +641,7 @@ classdef DOA < handle
                 end
             end
             if ~found
-                i = []
+                i = [];
             end
         end
     end
