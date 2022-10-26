@@ -81,7 +81,7 @@ for j = 2 : 3
     peak_point(j) = self.find_peak(sensor2_data(range, j)) + range(1) - 1;
     if peak_point(j) - peak_point(1) < min_point
         range = peak_point(j) + 1 : size(sensor2_data, 1);
-        peak_point(j) = self.find_peak(sensor2_data(range, j)); + range(1) - 1;
+        peak_point(j) = self.find_peak(sensor2_data(range, j)) + range(1) - 1;
     end
 end
 
