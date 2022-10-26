@@ -150,7 +150,7 @@ classdef DOA < handle
             %%     'direction' 4 analog input channels are needed, and
             %%     for 'location', 8 channels are need.
 
-            self.log('Setting up device.');
+            self.log('Setting up device...');
             daq.reset();
             daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization', true);
             ap = daq.createSession('ni');
@@ -186,7 +186,6 @@ classdef DOA < handle
             end
 
             self.daq_session = ap;
-            self.log('Device set up.');
         end
 
         function data = read_data(self)
