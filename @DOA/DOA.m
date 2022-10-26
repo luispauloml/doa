@@ -227,6 +227,10 @@ classdef DOA < handle
                     error("Only one optional argument expected: 'raw_data'");
             end
 
+            if isempty(data)
+                error("Input data is empty.");
+            end
+
             self.log('Post processing data...');
 
             %% Self calibration
