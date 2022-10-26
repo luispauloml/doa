@@ -265,10 +265,17 @@ classdef DOA < handle
             %%  - `y` : the y-position of the source (unit).
             %%
             %% If an angle cannot be computed, it will be an empty
-            %% matrix and so will `x` and `y`.
+            %% matrix and so will `x` and `y`. If post-processing
+            %% fails, returns an empty matrix.
 
             self.read_data();
             self.postprocess();
+
+            if isempty(self.data);
+                varargout = {[]};
+                return
+            end
+
             [a, peaks_idx] = self.process_T_array(self.data(:, 1:4));
             if strcmp(self.dir_or_loc, 'location')
                 [b, peaks_idx(end + 1:8)] = self.process_T_array(self.data(:, 5:8));
