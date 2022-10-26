@@ -380,7 +380,8 @@ classdef DOA < handle
                 peaks_vals(i) = self.data(self.peaks_idx(i), i);
             end
 
-            legends = {'Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Peaks'};
+            legends = {'Sensor 1', 'Sensor 2', 'Sensor 3',...
+                       'Sensor 4', 'Peaks', 'Threshold'};
             labels = @(x, y, t) [xlabel(x), ylabel(y), title(t)];
             switch self.dir_or_loc
                 case 'direction'
@@ -400,6 +401,9 @@ classdef DOA < handle
                 hold on;
                 plot(self.peaks_idx(idx), peaks_vals(idx), 'ko');
                 grid on;
+                plot([1, size(self.data, 1)], ...
+                     [self.threshold, self.threshold], ...
+                     'g--');
                 legend(legends{:});
                 xlim([1, 2*max(self.peaks_idx)]);
                 labels('Sample', 'Amplitude',...
