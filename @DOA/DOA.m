@@ -378,7 +378,8 @@ classdef DOA < handle
                 end
             else
                 self.plot_figures = ...
-                    struct('signals_figure', figure());
+                    struct('signals_figure', figure(),...
+                           'position_figure', figure());
             end
 
             peaks_vals = [];
@@ -416,6 +417,51 @@ classdef DOA < handle
                        sprintf('Sensor Array %i', i));
                 hold off;
             end
+
+            fig = self.plot_figures.position_figure;
+            figure(fig);
+            clf();
+            switch self.dir_or_loc
+                case 'direction'
+                    set(fig, 'Name', 'Direction of arrival');
+                    [a, c, d] = deal(self.aoa, atan(2), self.distance);
+                    m = tan(a);
+                    if a <= c
+                        plot([0, d/2], [0, m*d/2], 'k--');
+                    elseif a <= pi - c
+                        plot([0, d/m], [0, d], 'k--');
+                    else
+                        plot([0, -d/2], [0, -m*d/2], 'k--');
+                    end
+                    hold on;
+                    plot(0, 0, 'r*');
+                    x_lims = [-d/2, +d/2];
+                    y_lims = [0, d];
+                    legend('Direction', 'Sensor array');
+                    title(sprintf('Angle of arrival (deg): a=%0.1f', a/pi*180));
+                case 'location'
+                    set(fig, 'Name', 'Position of source');
+                    [a, b] = deal(self.aoa(1), self.aoa(2));
+                    [x, y] = deal(self.source_position(1),...
+                                  self.source_position(2));
+                    plot([0, x, 0], [0, y, self.distance], 'k--');
+                    hold on;
+                    plot([0, 0], [0, self.distance], 'bo');
+                    plot(x, y, 'r*');
+                    y_lims = [min(0, y), max(self.distance, y)];
+                    x_lims = max([self.distance, diff(y_lims), abs(2*x)]);
+                    x_lims = [-x_lims/2, +x_lims/2];
+                    legend('Direction', 'Sensor arrays', 'Source');
+                    title(sprintf('%s: x=%0.1f, y=%0.1f\n%s: a=%0.1f, b=%0.1f',...
+                                  'Position (unit)', x, y,...
+                                  'Angles of arrival (deg)', a/pi*180, b/pi*180));
+            end
+            axis equal;
+            xlim(x_lims);
+            ylim(y_lims);
+            xlabel('x');
+            ylabel('y');
+            grid on;
         end
 
         function [threshold] = calibrate_threshold(self, varargin)
