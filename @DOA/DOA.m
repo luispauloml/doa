@@ -515,10 +515,9 @@ classdef DOA < handle
                 end
             end
 
-            if self.quiet
-                return
+            if force || (~self.quiet && ~force)
+                disp(msg);
             end
-            disp(msg);
         end
 
         function [x, y] = get_source_position(self, a, b)
