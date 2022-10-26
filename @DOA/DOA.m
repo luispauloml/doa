@@ -1,5 +1,6 @@
 classdef DOA < handle
     properties (Access = public)
+        aoa = [];               % angles of arrival (rad)
         beep_flag = false;      % beep flag
         daq_session;            % DAQ session for NI device
         data = [];              % post-processed data read from DAQ session
@@ -12,6 +13,7 @@ classdef DOA < handle
         quiet = false;          % quiet flag
         raw_data = [];          % raw data read from DAQ session
         sampl_rate = 1e6;       % sampling rate (samples/s)
+        source_position = [];   % position of the source (unit)
         threshold = [];         % lower threshold for peak detection (volts)
     end
 
@@ -328,8 +330,12 @@ classdef DOA < handle
                     x = [];
                     y = [];
                 end
+                self.aoa = [a, b];
+                self.source_position = [x, y];
                 varargout = {a, b, x, y};
             else
+                self.aoa = a;
+                self.source_position = [];
                 varargout = {a};
             end
             self.peaks_idx = peaks_idx;
