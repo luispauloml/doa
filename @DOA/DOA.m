@@ -260,6 +260,9 @@ classdef DOA < handle
             %% [a] = run()
             %% [a, b, x, y] = run()
             %%
+            %% Read signals from device, postprocess it and compute
+            %% the direction or location of the source.
+            %%
             %% If the experiment is set to detect direction of
             %% arrival, returns `a` as the angle of arrival. If set to
             %% locate the source, returns:
@@ -279,6 +282,34 @@ classdef DOA < handle
                 varargout = {[]};
                 return
             end
+
+            switch self.dir_or_loc
+                case 'direction'
+                    a = self.compute_dirloc();
+                    varargout = {a};
+                case 'location'
+                    [a, b, x, y] = self.compute_dirloc();
+                    varargout = {a, b, x, y};
+            end
+        end
+
+        function varargout = compute_dirloc(self)
+            %% Compute direction or location of the source.
+            %%
+            %% [a] = compute_dirloc()
+            %% [a, b, x, y] = compute_dirloc()
+            %%
+            %% If the experiment is set to detect direction of
+            %% arrival, returns `a` as the angle of arrival. If set to
+            %% locate the source, returns:
+            %%  - `a` : the angle w.r.t to the first T-array (rad),
+            %%  - `b` : the angle w.r.t to the second T-array (rad),
+            %%  - `x` : the the x-position of the source (unit),
+            %%  - `y` : the y-position of the source (unit).
+            %%
+            %% If an angle cannot be computed, it will be an empty
+            %% matrix and so will `x` and `y`. If post-processing
+            %% fails, returns an empty matrix.
 
             [a, peaks_idx] = self.process_T_array(self.data(:, 1:4));
             if strcmp(self.dir_or_loc, 'location')
