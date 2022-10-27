@@ -421,10 +421,11 @@ classdef DOA < handle
             fig = self.plot_figures.position_figure;
             figure(fig);
             clf();
+            d = self.distance;
             switch self.dir_or_loc
                 case 'direction'
                     set(fig, 'Name', 'Direction of arrival');
-                    [a, c, d] = deal(self.aoa, atan(2), self.distance);
+                    [a, c] = deal(self.aoa, atan(2));
                     m = tan(a);
                     if a <= c
                         plot([0, d/2], [0, m*d/2], 'k--');
@@ -444,6 +445,7 @@ classdef DOA < handle
                     [a, b] = deal(self.aoa(1), self.aoa(2));
                     [x, y] = deal(self.source_position(1),...
                                   self.source_position(2));
+                    %% Pin-pointing the source
                     plot([0, x, 0], [0, y, self.distance], 'k--');
                     hold on;
                     plot([0, 0], [0, self.distance], 'bo');
@@ -451,10 +453,36 @@ classdef DOA < handle
                     y_lims = [min(0, y), max(self.distance, y)];
                     x_lims = max([self.distance, diff(y_lims), abs(2*x)]);
                     x_lims = [-x_lims/2, +x_lims/2];
-                    legend('Direction', 'Sensor arrays', 'Source');
                     title(sprintf('%s: x=%0.1f, y=%0.1f\n%s: a=%0.1f, b=%0.1f',...
                                   'Position (unit)', x, y,...
                                   'Angles of arrival (deg)', a/pi*180, b/pi*180));
+                    %% Region of impact
+                    plot([d/2, d/2, -d/2, -d/2, d/2],...
+                         [0, d, d, 0, 0],...
+                         'k-.','LineWidth', 2);
+                    if x > 0 && y > d/2
+                        %% First quadrant
+                        line = plot([0, d/2, d/2, 0, 0],...
+                                    [d/2, d/2, d, d, d/2]);
+                    elseif x <= 0 && y > d/2
+                        %% Second quadrant
+                        line = plot([0, 0, -d/2, -d/2, 0],...
+                                    [d/2, d, d, d/2, d/2]);
+                    elseif x <= 0 && y <= d/2
+                        %% Third quadrant
+                        line = plot([0, -d/2, -d/2, 0, 0],...
+                                    [d/2, d/2, 0, 0, d/2]);
+                    else
+                        %% Fourth quadrant
+                        line = plot([0, 0, d/2, d/2, 0],...
+                                    [d/2, 0, 0, d/2, d/2]);
+                    end
+                    set(line, 'LineStyle', '-.',...
+                        'Color', [0, 0, 1],...
+                        'LineWidth', 2);
+                    legend('Direction', 'Sensor arrays', 'Source',...
+                           'Region of impact', 'Plate boundary',...
+                          'Location','northeastoutside');
             end
             axis equal;
             xlim(x_lims);
