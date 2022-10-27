@@ -323,7 +323,8 @@ classdef DOA < handle
 
             [a, peaks_idx] = self.process_T_array(self.data(:, 1:4));
             if strcmp(self.dir_or_loc, 'location')
-                [b, peaks_idx(end + 1:8)] = self.process_T_array(self.data(:, 5:8));
+                [b, tmp] = self.process_T_array(self.data(:, 5:8));
+                peaks_idx = [peaks_idx, tmp]; % Concat to deal with empty values
                 if ~isempty(a) && ~isempty(b)
                     [x, y] = self.get_source_position(a, b);
                 else
@@ -340,7 +341,7 @@ classdef DOA < handle
             end
             self.peaks_idx = peaks_idx;
 
-            if self.plots_flag
+            if self.plots_flag && ~isempty(peaks_idx)
                 self.plot_results(self.overwrite_plots);
             end
         end

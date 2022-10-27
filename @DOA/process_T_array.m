@@ -20,6 +20,7 @@ function [angle, peaks_idx] = process_T_array(self, data)
 %%     no angle is found, returns an empty matrix.
 
 angle = [];
+peaks_idx = [];
 NO_IMPACT_MSG = 'No peak found.';
 if isempty(data)
     self.log(NO_IMPACT_MSG);
