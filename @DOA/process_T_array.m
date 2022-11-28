@@ -43,15 +43,15 @@ end
 % find sensor 1 signal peak point
 peak_point = [];
 range = threshold_over_point : size(sensor1_data, 1);
-peak_point(1) = DOA.find_peak(sensor1_data(range, 1)) + range(1) - 1;
+peak_point(1) = find_peak(sensor1_data(range, 1)) + range(1) - 1;
 
 % find sensor 2 signal peak point
 range = peak_point(1) : size(sensor1_data, 1);
 for j = 2 : 3
-    peak_point(j) = DOA.find_peak(sensor1_data(range, j)) + range(1) - 1;
+    peak_point(j) = find_peak(sensor1_data(range, j)) + range(1) - 1;
     if peak_point(j) - peak_point(1) < min_point
         range = peak_point(j) + 1 : size(sensor1_data, 1);
-        peak_point(j) = DOA.find_peak(sensor1_data(range, j)) + range(1) - 1;
+        peak_point(j) = find_peak(sensor1_data(range, j)) + range(1) - 1;
     end
 end
 
@@ -73,15 +73,15 @@ threshold_over_point = DOA.point_over_threshold(sensor2_data(:, 1), threshold);
 % find sensor 1 signal peak point
 peak_point = [];
 range = threshold_over_point : size(sensor2_data, 1);
-peak_point(1) = DOA.find_peak(sensor2_data(range, 1)) + range(1) - 1;
+peak_point(1) = find_peak(sensor2_data(range, 1)) + range(1) - 1;
 
 % find sensor 2 signal peak point
 range = peak_point(1) : size(sensor2_data, 1);
 for j = 2 : 3
-    peak_point(j) = DOA.find_peak(sensor2_data(range, j)) + range(1) - 1;
+    peak_point(j) = find_peak(sensor2_data(range, j)) + range(1) - 1;
     if peak_point(j) - peak_point(1) < min_point
         range = peak_point(j) + 1 : size(sensor2_data, 1);
-        peak_point(j) = DOA.find_peak(sensor2_data(range, j)) + range(1) - 1;
+        peak_point(j) = find_peak(sensor2_data(range, j)) + range(1) - 1;
     end
 end
 
@@ -101,4 +101,32 @@ if threshold_over_point_R<threshold_over_point_L
     angle = angle1;
 else
     angle = angle2;
+end
+
+function i = find_peak(data)
+%% Find the first maximum point in a 1D matrix.
+%%
+%% i = find_peak(data)
+%%
+%% Find the first maximum using the change of signal of
+%% the gradient. Returns an empty matrix in case no
+%% maximum is found.
+%%
+%% Parameters:
+%% data : matrix
+%%     The matrix with the data.
+
+found = false;
+for i = 2 : length(data) - 1
+    fac1 = data(i) - data(i-1);
+    fac2 = data(i + 1) - data(i);
+    if fac1 * fac2 < 0
+        if fac1 > 0
+            found = true;
+            break
+        end
+    end
+end
+if ~found
+    i = [];
 end

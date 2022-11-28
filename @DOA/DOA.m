@@ -614,34 +614,6 @@ classdef DOA < handle
 
     methods (Access = private, Static)
         thres_over_point = point_over_threshold(data, threshold)
-
-        function i = find_peak(data)
-            %% Find the first maximum point in a 1D matrix.
-            %%
-            %% i = find_peak(data)
-            %%
-            %% Find the first maximum using the change of signal of
-            %% the gradient. Returns an empty matrix in case no
-            %% maximum is found.
-            %%
-            %% Parameters:
-            %% data : matrix
-            %%     The matrix with the data.
-
-            found = false;
-            for i = 2 : length(data) - 1
-                fac1 = data(i) - data(i-1);
-                fac2 = data(i + 1) - data(i);
-                if fac1 * fac2 < 0
-                    if fac1 > 0
-                        found = true;
-                        break
-                    end
-                end
-            end
-            if ~found
-                i = [];
-            end
-        end
+        i = find_peak(data)
     end
 end
