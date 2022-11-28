@@ -326,7 +326,7 @@ classdef DOA < handle
                                                 self.threshold);
                 peaks_idx = [peaks_idx, tmp]; % Concat to deal with empty values
                 if ~isempty(a) && ~isempty(b)
-                    [x, y] = self.get_source_position(a, b);
+                    [x, y] = self.get_source_position(a, b, self.distance);
                 else
                     x = [];
                     y = [];
@@ -605,27 +605,11 @@ classdef DOA < handle
                 disp(msg);
             end
         end
-
-        function [x, y] = get_source_position(self, a, b)
-            %% Calucate (x, y) position of the source.
-            %%
-            %% [x, y] = get_source_position(a, b)
-            %%
-            %% Parameters:
-            %% a : scalar
-            %%     The angle w.r.t the first T-array.
-            %% b : scalar
-            %%     The angle w.r.t the second T-array.
-
-            m1 = tan(a);
-            m2 = tan(b + pi);
-            x = self.distance / (m1 - m2);
-            y = m1 * x;
-        end
     end
 
     methods (Access = public, Static)
         [angle, peaks_idx] = process_T_array(data, threshold)
+        [x, y] = get_source_position(a, b, distance)
     end
 
     methods (Access = private, Static)
