@@ -262,8 +262,6 @@ classdef DOA < handle
             self.data = data;
         end
 
-        [angle, peaks_idx] = process_T_array(self, data, varargin)
-
         function varargout = run(self)
             %% Execute the experiment.
             %%
@@ -321,9 +319,11 @@ classdef DOA < handle
             %% matrix and so will `x` and `y`. If post-processing
             %% fails, returns an empty matrix.
 
-            [a, peaks_idx] = self.process_T_array(self.data(:, 1:4));
+            [a, peaks_idx] = self.process_T_array(self.data(:, 1:4), ...
+                                                  self.threshold);
             if strcmp(self.dir_or_loc, 'location')
-                [b, tmp] = self.process_T_array(self.data(:, 5:8));
+                [b, tmp] = self.process_T_array(self.data(:, 5:8), ...
+                                                self.threshold);
                 peaks_idx = [peaks_idx, tmp]; % Concat to deal with empty values
                 if ~isempty(a) && ~isempty(b)
                     [x, y] = self.get_source_position(a, b);
@@ -341,7 +341,9 @@ classdef DOA < handle
             end
             self.peaks_idx = peaks_idx;
 
-            if self.plots_flag && ~isempty(peaks_idx)
+            if isempty(peaks_idx)
+                self.log('No peak found.');
+            elseif self.plots_flag
                 self.plot_results(self.overwrite_plots);
             end
         end
@@ -620,6 +622,10 @@ classdef DOA < handle
             x = self.distance / (m1 - m2);
             y = m1 * x;
         end
+    end
+
+    methods (Access = public, Static)
+        [angle, peaks_idx] = process_T_array(data, threshold)
     end
 
     methods (Access = private, Static)

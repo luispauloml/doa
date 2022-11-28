@@ -1,7 +1,7 @@
-function [angle, peaks_idx] = process_T_array(self, data)
+function [angle, peaks_idx] = process_T_array(data, threshold)
 %% Process data from a T-array of sensors.
 %%
-%% [angle, peaks_idx] = process_T_array(data)
+%% [angle, peaks_idx] = process_T_array(data, threshold)
 %%
 %% Calculate the angle of arrival of the wave from the signal in
 %% `data`.
@@ -10,6 +10,8 @@ function [angle, peaks_idx] = process_T_array(self, data)
 %% data : matrix
 %%     A 4-column matrix with the signal read from a T-array of
 %%     sensors.
+%% threshold : scalar
+%%    Threshold value over which peaks can be detected.
 %%
 %% Returns:
 %% angle : double
@@ -21,9 +23,7 @@ function [angle, peaks_idx] = process_T_array(self, data)
 
 angle = [];
 peaks_idx = [];
-NO_IMPACT_MSG = 'No peak found.';
 if isempty(data)
-    self.log(NO_IMPACT_MSG);
     return
 end
 
@@ -34,25 +34,24 @@ sensor1_data = data(:, 1 : 3);
 
 % get first wave arrival point
 % active threshold setup
-threshold_over_point = self.point_over_threshold(sensor1_data(:, 1), self.threshold);
+threshold_over_point = DOA.point_over_threshold(sensor1_data(:, 1), threshold);
 
 if isempty(threshold_over_point)
-    self.log(NO_IMPACT_MSG);
     return
 end
 
 % find sensor 1 signal peak point
 peak_point = [];
 range = threshold_over_point : size(sensor1_data, 1);
-peak_point(1) = self.find_peak(sensor1_data(range, 1)) + range(1) - 1;
+peak_point(1) = DOA.find_peak(sensor1_data(range, 1)) + range(1) - 1;
 
 % find sensor 2 signal peak point
 range = peak_point(1) : size(sensor1_data, 1);
 for j = 2 : 3
-    peak_point(j) = self.find_peak(sensor1_data(range, j)) + range(1) - 1;
+    peak_point(j) = DOA.find_peak(sensor1_data(range, j)) + range(1) - 1;
     if peak_point(j) - peak_point(1) < min_point
         range = peak_point(j) + 1 : size(sensor1_data, 1);
-        peak_point(j) = self.find_peak(sensor1_data(range, j)) + range(1) - 1;
+        peak_point(j) = DOA.find_peak(sensor1_data(range, j)) + range(1) - 1;
     end
 end
 
@@ -69,27 +68,27 @@ sensor2_data = data(:, [1 2 4]);
 
 % get first wave arrival point
 % active threshold setup
-threshold_over_point = self.point_over_threshold(sensor2_data(:, 1), self.threshold);
+threshold_over_point = DOA.point_over_threshold(sensor2_data(:, 1), threshold);
 
 % find sensor 1 signal peak point
 peak_point = [];
 range = threshold_over_point : size(sensor2_data, 1);
-peak_point(1) = self.find_peak(sensor2_data(range, 1)) + range(1) - 1;
+peak_point(1) = DOA.find_peak(sensor2_data(range, 1)) + range(1) - 1;
 
 % find sensor 2 signal peak point
 range = peak_point(1) : size(sensor2_data, 1);
 for j = 2 : 3
-    peak_point(j) = self.find_peak(sensor2_data(range, j)) + range(1) - 1;
+    peak_point(j) = DOA.find_peak(sensor2_data(range, j)) + range(1) - 1;
     if peak_point(j) - peak_point(1) < min_point
         range = peak_point(j) + 1 : size(sensor2_data, 1);
-        peak_point(j) = self.find_peak(sensor2_data(range, j)) + range(1) - 1;
+        peak_point(j) = DOA.find_peak(sensor2_data(range, j)) + range(1) - 1;
     end
 end
 
 peaks_idx([1, 2, 4]) = peak_point;
 
-threshold_over_point_L = self.point_over_threshold(data(:, 3), self.threshold);
-threshold_over_point_R = self.point_over_threshold(data(:, 4), self.threshold);
+threshold_over_point_L = DOA.point_over_threshold(data(:, 3), threshold);
+threshold_over_point_R = DOA.point_over_threshold(data(:, 4), threshold);
 
 dt21 = peak_point(2) - peak_point(1);
 dt31 = peak_point(3) - peak_point(1);
