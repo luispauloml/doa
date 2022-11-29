@@ -551,7 +551,6 @@ classdef DOA < handle
     end
 
     methods (Access = private, Static)
-        i = find_peak(data)
         thres_over_point = point_over_threshold(data, threshold)
     end
 end
