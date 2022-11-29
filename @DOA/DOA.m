@@ -410,19 +410,11 @@ classdef DOA < handle
             set(fig, 'Name', 'Signals');
             for i = 1 : N
                 idx = [1 : 4] + 4*(i - 1);
-                subplot(N, 1, i);
-                plot(self.data(:, idx));
-                hold on;
-                plot(self.peaks_idx(idx), peaks_vals(idx), 'ko');
-                grid on;
-                plot([1, size(self.data, 1)], ...
-                     [self.threshold, self.threshold], ...
-                     'g--');
-                legend(legends{:});
+                h = subplot(N, 1, i);
+                self.plots_helper(h, 'signals', self.data(:, idx), ...
+                                  self.peaks_idx(idx), self.threshold);
+                title(sprintf('Sensor Array %i', i));
                 xlim([1, 2*max(self.peaks_idx)]);
-                labels('Sample', 'Amplitude',...
-                       sprintf('Sensor Array %i', i));
-                hold off;
             end
 
             fig = self.plot_figures.position_figure;
@@ -432,71 +424,12 @@ classdef DOA < handle
             switch self.dir_or_loc
                 case 'direction'
                     set(fig, 'Name', 'Direction of arrival');
-                    [a, c] = deal(self.aoa, atan(2));
-                    m = tan(a);
-                    if a <= c
-                        plot([0, d/2], [0, m*d/2], 'k--');
-                    elseif a <= pi - c
-                        plot([0, d/m], [0, d], 'k--');
-                    else
-                        plot([0, -d/2], [0, -m*d/2], 'k--');
-                    end
-                    hold on;
-                    plot(0, 0, 'r*');
-                    x_lims = [-d/2, +d/2];
-                    y_lims = [0, d];
-                    legend('Direction', 'Sensor array');
-                    title(sprintf('Angle of arrival (deg): a=%0.1f', a/pi*180));
+                    self.plots_helper(gca(), 'direction', self.aoa);
                 case 'location'
                     set(fig, 'Name', 'Position of source');
-                    [a, b] = deal(self.aoa(1), self.aoa(2));
-                    [x, y] = deal(self.source_position(1),...
-                                  self.source_position(2));
-                    %% Pin-pointing the source
-                    plot([0, x, 0], [0, y, self.distance], 'k--');
-                    hold on;
-                    plot([0, 0], [0, self.distance], 'bo');
-                    plot(x, y, 'r*');
-                    y_lims = [min(0, y), max(self.distance, y)];
-                    x_lims = max([self.distance, diff(y_lims), abs(2*x)]);
-                    x_lims = [-x_lims/2, +x_lims/2];
-                    title(sprintf('%s: x=%0.1f, y=%0.1f\n%s: a=%0.1f, b=%0.1f',...
-                                  'Position (unit)', x, y,...
-                                  'Angles of arrival (deg)', a/pi*180, b/pi*180));
-                    %% Region of impact
-                    plot([d/2, d/2, -d/2, -d/2, d/2],...
-                         [0, d, d, 0, 0],...
-                         'k-.','LineWidth', 2);
-                    if x > 0 && y > d/2
-                        %% First quadrant
-                        line = plot([0, d/2, d/2, 0, 0],...
-                                    [d/2, d/2, d, d, d/2]);
-                    elseif x <= 0 && y > d/2
-                        %% Second quadrant
-                        line = plot([0, 0, -d/2, -d/2, 0],...
-                                    [d/2, d, d, d/2, d/2]);
-                    elseif x <= 0 && y <= d/2
-                        %% Third quadrant
-                        line = plot([0, -d/2, -d/2, 0, 0],...
-                                    [d/2, d/2, 0, 0, d/2]);
-                    else
-                        %% Fourth quadrant
-                        line = plot([0, 0, d/2, d/2, 0],...
-                                    [d/2, 0, 0, d/2, d/2]);
-                    end
-                    set(line, 'LineStyle', '-.',...
-                        'Color', [0, 0, 1],...
-                        'LineWidth', 2);
-                    legend('Direction', 'Sensor arrays', 'Source',...
-                           'Plate boundary', 'Region of impact',...
-                          'Location','northeastoutside');
+                    self.plots_helper(gca(), 'location', self.aoa, ...
+                                      self.distance, self.source_position);
             end
-            axis equal;
-            xlim(x_lims);
-            ylim(y_lims);
-            xlabel('x');
-            ylabel('y');
-            grid on;
         end
 
         function [threshold] = calibrate_threshold(self, varargin)
@@ -613,6 +546,7 @@ classdef DOA < handle
 
     methods (Access = public, Static)
         [x, y] = get_source_position(a, b, distance)
+        ax = plots_helper(varargin)
         [angle, peaks_idx] = process_T_array(data, threshold)
     end
 
