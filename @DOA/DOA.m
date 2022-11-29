@@ -612,12 +612,12 @@ classdef DOA < handle
     end
 
     methods (Access = public, Static)
-        [angle, peaks_idx] = process_T_array(data, threshold)
         [x, y] = get_source_position(a, b, distance)
+        [angle, peaks_idx] = process_T_array(data, threshold)
     end
 
     methods (Access = private, Static)
-        thres_over_point = point_over_threshold(data, threshold)
         i = find_peak(data)
+        thres_over_point = point_over_threshold(data, threshold)
     end
 end
