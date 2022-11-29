@@ -282,6 +282,9 @@ classdef DOA < handle
             %% If an angle cannot be computed, it will be an empty
             %% matrix and so will `x` and `y`. If post-processing
             %% fails, returns an empty matrix.
+            %%
+            %% It also plot results, which can be controlled by
+            %% setting the `overwrite_plots` property.
 
             self.read_data();
             self.postprocess();
@@ -298,6 +301,11 @@ classdef DOA < handle
                 case 'location'
                     [a, b, x, y] = self.compute_dirloc();
                     varargout = {a, b, x, y};
+            end
+
+            if self.plots_flag
+                self.log('Plotting...');
+                self.plot_results(self.overwrite_plots);
             end
         end
 
@@ -343,8 +351,6 @@ classdef DOA < handle
 
             if isempty(peaks_idx)
                 self.log('No peak found.');
-            elseif self.plots_flag
-                self.plot_results(self.overwrite_plots);
             end
         end
 
@@ -358,8 +364,6 @@ classdef DOA < handle
             %%     If true, overwrite previously used figures. If
             %%     false, create new ones instead. If not given, use
             %%     `overwrite_plot` property's value instead.
-
-            self.log('Plotting...');
 
             switch length(varargin)
                 case 0
