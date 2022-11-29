@@ -547,10 +547,7 @@ classdef DOA < handle
     methods (Access = public, Static)
         [x, y] = get_source_position(a, b, distance)
         ax = plots_helper(varargin)
-        [angle, peaks_idx] = process_T_array(data, threshold)
-    end
-
-    methods (Access = private, Static)
         thres_over_point = point_over_threshold(data, threshold)
+        [angle, peaks_idx] = process_T_array(data, threshold)
     end
 end
