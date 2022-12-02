@@ -1,7 +1,7 @@
-function [x, y] = get_source_position(a, b, distance)
-%% Calucate (x, y) position of the source.
+function [x, y] = estimate_source_position(a, b, distance)
+%% Estimate (x, y) position of the source.
 %%
-%% [x, y] = get_source_position(a, b)
+%% [x, y] = estimate_source_position(a, b, distance)
 %%
 %% Parameters:
 %% a : scalar

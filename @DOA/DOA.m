@@ -334,7 +334,7 @@ classdef DOA < handle
                                                 self.threshold);
                 peaks_idx = [peaks_idx, tmp]; % Concat to deal with empty values
                 if ~isempty(a) && ~isempty(b)
-                    [x, y] = self.get_source_position(a, b, self.distance);
+                    [x, y] = self.estimate_source_position(a, b, self.distance);
                 else
                     x = [];
                     y = [];
@@ -545,7 +545,7 @@ classdef DOA < handle
     end
 
     methods (Access = public, Static)
-        [x, y] = get_source_position(a, b, distance)
+        [x, y] = estimate_source_position(a, b, distance)
         ax = plots_helper(varargin)
         thres_over_point = point_over_threshold(data, threshold)
         [angle, peaks_idx] = process_T_array(data, threshold)
