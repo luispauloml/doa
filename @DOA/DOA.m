@@ -334,13 +334,15 @@ classdef DOA < handle
                                                 self.threshold);
                 peaks_idx = [peaks_idx, tmp]; % Concat to deal with empty values
                 if ~isempty(a) && ~isempty(b)
-                    [x, y] = self.estimate_source_position(a, b, self.distance);
+                    pos = self.estimate_source_position(a, b, self.distance);
+                    x = pos(1);
+                    y = pos(2);
                 else
                     x = [];
                     y = [];
                 end
                 self.aoa = [a, b];
-                self.source_position = [x, y];
+                self.source_position = pos;
                 varargout = {a, b, x, y};
             else
                 self.aoa = a;

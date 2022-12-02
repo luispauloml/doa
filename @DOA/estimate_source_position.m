@@ -1,7 +1,9 @@
-function [x, y] = estimate_source_position(a, b, distance)
+function pos = estimate_source_position(a, b, distance)
 %% Estimate (x, y) position of the source.
 %%
-%% [x, y] = estimate_source_position(a, b, distance)
+%% pos = estimate_source_position(a, b, distance)
+%%
+%% Returns `pos` as a 1x2 matrix with [x, y] position of the source.
 %%
 %% Parameters:
 %% a : scalar
@@ -13,5 +15,6 @@ function [x, y] = estimate_source_position(a, b, distance)
 
 m1 = tan(a);
 m2 = tan(b + pi);
-x = distance / (m1 - m2);
-y = m1 * x;
+pos = zeros([1, 2]);
+pos(1) = distance / (m1 - m2);
+pos(2) = m1 * pos(1);
